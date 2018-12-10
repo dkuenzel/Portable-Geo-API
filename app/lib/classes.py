@@ -87,7 +87,7 @@ if (__name__ == "__main__"):
 		vertexTable = "world_2po_vertex"
 	config=config()
 
-	# DB Connection add file which contains standard psycopg2 conn string
+	# variable conn_string formatted as standard psycopg2 conn string
 	from credentials import *
 	#from tc_db4_connect_v2 import *
 	try:
