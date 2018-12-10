@@ -1,4 +1,5 @@
 /__pycache__/
+/__venv__/
 .credentials
 
 # Project files, i.e. `.project`, `.actionScriptProperties` and `.flexProperties`
