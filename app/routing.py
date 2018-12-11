@@ -1,16 +1,17 @@
-# Mockup request
-requestData = {"origin": {"lon": 5.23487, "lat": 52.123412}, "destination": {"lon": 5.23487, "lat": 52.623412}, "dop": 0.01}
-
 
 # Libraries
 import sys
 import psycopg2
 import psycopg2.extras
 
-from scripts.classes import *
-from scripts.functions import *
-
 from config import *
+
+from lib.classes import *
+from lib.functions import *
+
+
+# Mockup request from config class
+requestData = config.mockupRequest
 
 # DB Connection
 db_params = "dbname=test user=testa password=wa08ef328jfßpij"
@@ -22,8 +23,8 @@ except Exception as e:
 	sys.exit()
 
 # Request
-origin = vertex(5.2348172, 52.32465)
-destination = vertex(5.2348172, 51.32465)
+origin = vertex(5.501135, 51.421882)
+destination = vertex(5.459465, 51.454974)
 task = routingRequest(origin, destination)
 
 # output

@@ -46,14 +46,14 @@ class vertex:
 		
 		return (result["id"])
 
-class routingRequest:
+class route:
 	def __init__(self, originVertex, destinationVertex, dop=0.01):
 		self.origin = originVertex
 		self.destination = destinationVertex
 		self.dop = dop
-		self.route = self.calculateRoute()
+		self.route = self.routingRequest()
 	
-	def calculateRoute(self):
+	def routingRequest(self):
 		# Calculate route
 		sql = f"\
 			CREATE TEMPORARY TABLE temp_routing_edges ON COMMIT DROP AS ( \
@@ -118,7 +118,7 @@ if (__name__ == "__main__"):
 		v2=vertex(geocode=g2) # Test vertex class
 		print(v1)
 		print("Testing Routing Class")
-		r1=routingRequest(v1, v2)
+		r1=route(v1, v2)
 		print(r1)
 		print("Unit tests for classes.py successful")
 	except Exception as e:
