@@ -2,6 +2,26 @@
 
 """gets closest osm vertex from db"""
 
+# Libraries
+import sys
+import psycopg2
+import psycopg2.extras
+
+###################
+# Put this in routing.py if possible
+sys.path.append('..')
+from settings.config import config
+from settings.credentials import pgConnString # DB Connection: add file which contains standard psycopg2 conn string
+# DB Connection
+try:
+	dbConn = psycopg2.connect(pgConnString)
+	dbCursor = dbConn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+except Exception as e:
+	print (f"No connection to DB (reason: {e})")
+	sys.exit()
+###################
+
+
 class longitude:
 	def __init__(self, val):
 		self.val = val
@@ -15,7 +35,7 @@ class latitude:
 		self.val = val
 		self.validate()
 	def validate(self):
-		if (self.val > 180) or (self.val < -180):
+		if (self.val > 90) or (self.val < -90):
 			return False
 
 class geocode:
@@ -51,7 +71,7 @@ class route:
 		self.origin = originVertex
 		self.destination = destinationVertex
 		self.dop = dop
-		self.route = self.routingRequest()
+		self.routingResponse = self.routingRequest()
 	
 	def routingRequest(self):
 		# Calculate route
@@ -79,19 +99,22 @@ if (__name__ == "__main__"):
 	## Testing
 	# Libraries
 	import sys
+	sys.path.append('..')
+	
+	from settings.config import config # DB Connection: add file which contains standard psycopg2 conn string
+	from settings.credentials import pgConnString
+	
 	import psycopg2
 	import psycopg2.extras
 	
-	class config:
-		edgesTable = "world_2po_4pgr"
-		vertexTable = "world_2po_vertex"
-	config=config()
+	#class config:
+	#	edgesTable = "world_2po_4pgr"
+	#	vertexTable = "world_2po_vertex"
+	#config=config()
 
-	# DB Connection add file which contains standard psycopg2 conn string
-	from credentials import *
 	#from tc_db4_connect_v2 import *
 	try:
-		dbConn = psycopg2.connect(conn_string)
+		dbConn = psycopg2.connect(pgConnString)
 		dbCursor = dbConn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 	except Exception as e:
 		print (f"No connection to DB (reason: {e})")
