@@ -57,7 +57,7 @@ class vertex:
 		latitude = geocode.latitude.val
 		
 		sql = f"\
-				SELECT * \
+				SELECT id \
 				FROM {config.vertexTable} \
 				WHERE st_dwithin(geom_vertex, st_setsrid(st_makepoint({longitude},{latitude}),4326), {dop}) \
 				ORDER BY geom_vertex <-> st_setsrid(st_makepoint({longitude},{latitude}),4326) LIMIT 1;"
@@ -67,17 +67,22 @@ class vertex:
 		return (result["id"])
 
 class route:
-	def __init__(self, originVertex, destinationVertex, dop=0.01):
+	def __init__(self, originVertex, destinationVertex, dop=0.01, transportationMode = 0):
+		# Parameters
 		self.origin = originVertex
 		self.destination = destinationVertex
 		self.dop = dop
-		self.routingResponse = self.routingRequest()
-	
-	def routingRequest(self):
+		self.transportationMode = transportationMode # Used for selection of routing network and moving speed. No further implementation right now, just to be future proof: 0=pedestrian
+		# Instance variables
+		self.routingResponse = self._routingRequest()
+		self.routingDistance = self._routingDistance()
+		
+	# Get the data from DB
+	def _routingRequest(self):
 		# Calculate route
 		sql = f"\
 			CREATE TEMPORARY TABLE temp_routing_edges ON COMMIT DROP AS ( \
-			SELECT * \
+			SELECT id, source, target, cost, reverse_cost, km \
 				FROM {config.edgesTable} \
 				WHERE geom_way && ST_Buffer( \
 				ST_Envelope(St_MakeLine( \
@@ -85,15 +90,24 @@ class route:
 					ST_SetSRID(ST_MakePoint({self.destination.geocode.longitude.val},{self.destination.geocode.latitude.val}),4326))), \
 				0.01)); \
 				\
-				SELECT * \
+				SELECT ds.*, tr.km \
 				FROM pgr_dijkstra \
-				('SELECT * FROM temp_routing_edges', {self.origin.vertexId}, {self.destination.vertexId});"
+				('SELECT * FROM temp_routing_edges', {self.origin.vertexId}, {self.destination.vertexId}) AS ds \
+				LEFT JOIN temp_routing_edges AS tr ON (ds.edge = tr.id) \
+				ORDER BY seq;"
 		dbCursor.execute(sql)
 		result = dbCursor.fetchall()
 		dbConn.commit()
 		# Return result
 		return result
-
+	
+	# Calculate route distance
+	def _routingDistance(self):
+		distance = 0
+		for edge in self.routingResponse:
+			if edge["km"] is not None:
+				distance = distance + edge["km"]
+		return distance
 
 if (__name__ == "__main__"):	
 	## Testing

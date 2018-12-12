@@ -16,4 +16,6 @@ destination = vertex(geocode=destinationGeocode)
 task = route(origin, destination)
 
 # output
-print(task.routingResponse)
+for step in task.routingResponse:
+	print(step)
+print(task.routingDistance)
