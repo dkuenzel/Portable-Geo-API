@@ -78,8 +78,8 @@ class route:
 		self.dop = dop
 		self.transportationMode = transportationMode # Used for selection of routing network and moving speed. No further implementation right now, just to be future proof: 0=pedestrian
 		# Instance variables
-		self.routingResponse = self._routingRequest()
-		self.routingDistance = self._routingDistance()
+		self.raw = self._routingRequest()
+		self.distance = self._routingDistance()
 		
 	# Get the data from DB
 	def _routingRequest(self):
@@ -104,13 +104,13 @@ class route:
 		dbConn.commit()
 		# Return result
 		return result
-	
+		
 	# Calculate route distance
 	def _routingDistance(self):
 		distance = 0
-		for edge in self.routingResponse:
-			if edge["km"] is not None:
-				distance = distance + edge["km"]
+		for way in self.raw:
+			if way["km"] is not None:
+				distance = distance + way["km"]
 		return distance
 
 if (__name__ == "__main__"):	
