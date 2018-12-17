@@ -1,5 +1,5 @@
-from flask import Blueprint
+from flask import Flask
 
-bp = Blueprint('api', __name__)
+app = Flask(__name__)
 
-from app.api import routing, errors, functions
+from api import routes

@@ -1,4 +1,5 @@
 from lib.basic_types import *
+import re
 
 class geoRequest:
 	def __init__(self, origin_lon, origin_lat, destination_lon, destination_lat):
@@ -28,4 +29,9 @@ class geoRequest:
 		for row in self.result.raw:
 			output = output + '\n' + str(row)
 		output = output + '\n' + 'Distance: ' + str(self.getDistance()) + ' Km'
+		return output
+	
+	def html(self):
+		output = self.__str__()
+		output = re.sub(r"\n", "<br>", output)
 		return output
