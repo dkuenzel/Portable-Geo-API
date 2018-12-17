@@ -16,10 +16,9 @@ def help():
 		3) Distance only'
 	return text
 
-
 # Try: http://127.0.0.1:5000/p2p/0/5.125/51.31234/5.12/51.31
 @app.route('/p2p/0/<float:origin_lon>/<float:origin_lat>/<float:destination_lon>/<float:destination_lat>', methods=['GET'])
-def getRawRouteBeautified(origin_lon, origin_lat, destination_lon, destination_lat):
+def getBeautified(origin_lon, origin_lat, destination_lon, destination_lat):
 	request = geoRequest(origin_lon, origin_lat, destination_lon, destination_lat)
 	request.p2p()
 	return request.html()
