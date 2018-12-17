@@ -2,6 +2,26 @@
 
 """gets closest osm vertex from db"""
 
+# Libraries
+import sys
+import psycopg2
+import psycopg2.extras
+
+###################
+# Remove this if possible
+sys.path.append('..')
+from settings.config import config
+from settings.credentials import pgConnString # DB Connection: add file which contains standard psycopg2 conn string
+# DB Connection
+try:
+	dbConn = psycopg2.connect(pgConnString)
+	dbCursor = dbConn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+except Exception as e:
+	print (f"No connection to DB (reason: {e})")
+	sys.exit()
+###################
+
+
 class longitude:
 	def __init__(self, val):
 		self.val = val
@@ -15,7 +35,7 @@ class latitude:
 		self.val = val
 		self.validate()
 	def validate(self):
-		if (self.val > 180) or (self.val < -180):
+		if (self.val > 90) or (self.val < -90):
 			return False
 
 class geocode:
@@ -24,20 +44,24 @@ class geocode:
 		self.latitude = lat
 					
 class vertex:
-	def __init__(self, vertexId=None, geocode=None):
-		self.dop = None
+	def __init__(self, vertexId=None, geocode=None, dop=None):
 		self.vertexId = vertexId
 		self.geocode = geocode
+		self.dop = dop
 		
 		if self.vertexId is None:
-			self.vertexId = self.getVertexFromGeocode(geocode)
+			if self.dop is None:
+				self.vertexId = self.getVertexFromGeocode(geocode)
+			else:
+				self.vertexId = self.getVertexFromGeocode(geocode, self.dop)
+				
 	
 	def getVertexFromGeocode(self, geocode, dop=0.1):
 		longitude = geocode.longitude.val 
 		latitude = geocode.latitude.val
 		
 		sql = f"\
-				SELECT * \
+				SELECT id \
 				FROM {config.vertexTable} \
 				WHERE st_dwithin(geom_vertex, st_setsrid(st_makepoint({longitude},{latitude}),4326), {dop}) \
 				ORDER BY geom_vertex <-> st_setsrid(st_makepoint({longitude},{latitude}),4326) LIMIT 1;"
@@ -46,18 +70,23 @@ class vertex:
 		
 		return (result["id"])
 
-class routingRequest:
-	def __init__(self, originVertex, destinationVertex, dop=0.01):
+class route:
+	def __init__(self, originVertex, destinationVertex, dop=0.01, transportationMode = 0):
+		# Parameters
 		self.origin = originVertex
 		self.destination = destinationVertex
 		self.dop = dop
-		self.route = self.calculateRoute()
-	
-	def calculateRoute(self):
+		self.transportationMode = transportationMode # Used for selection of routing network and moving speed. No further implementation right now, just to be future proof: 0=pedestrian
+		# Instance variables
+		self.raw = self._routingRequest()
+		self.distance = self._routingDistance()
+		
+	# Get the data from DB
+	def _routingRequest(self):
 		# Calculate route
 		sql = f"\
 			CREATE TEMPORARY TABLE temp_routing_edges ON COMMIT DROP AS ( \
-			SELECT * \
+			SELECT id, source, target, cost, reverse_cost, km \
 				FROM {config.edgesTable} \
 				WHERE geom_way && ST_Buffer( \
 				ST_Envelope(St_MakeLine( \
@@ -65,33 +94,45 @@ class routingRequest:
 					ST_SetSRID(ST_MakePoint({self.destination.geocode.longitude.val},{self.destination.geocode.latitude.val}),4326))), \
 				0.01)); \
 				\
-				SELECT * \
+				SELECT ds.*, tr.km \
 				FROM pgr_dijkstra \
-				('SELECT * FROM temp_routing_edges', {self.origin.vertexId}, {self.destination.vertexId});"
+				('SELECT * FROM temp_routing_edges', {self.origin.vertexId}, {self.destination.vertexId}) AS ds \
+				LEFT JOIN temp_routing_edges AS tr ON (ds.edge = tr.id) \
+				ORDER BY seq;"
 		dbCursor.execute(sql)
 		result = dbCursor.fetchall()
 		dbConn.commit()
 		# Return result
 		return result
-
+		
+	# Calculate route distance
+	def _routingDistance(self):
+		distance = 0
+		for way in self.raw:
+			if way["km"] is not None:
+				distance = distance + way["km"]
+		return distance
 
 if (__name__ == "__main__"):	
 	## Testing
 	# Libraries
 	import sys
+	sys.path.append('..')
+	
+	from settings.config import config # DB Connection: add file which contains standard psycopg2 conn string
+	from settings.credentials import pgConnString
+	
 	import psycopg2
 	import psycopg2.extras
 	
-	class config:
-		edgesTable = "world_2po_4pgr"
-		vertexTable = "world_2po_vertex"
-	config=config()
+	#class config:
+	#	edgesTable = "world_2po_4pgr"
+	#	vertexTable = "world_2po_vertex"
+	#config=config()
 
-	# variable conn_string formatted as standard psycopg2 conn string
-	from credentials import *
 	#from tc_db4_connect_v2 import *
 	try:
-		dbConn = psycopg2.connect(conn_string)
+		dbConn = psycopg2.connect(pgConnString)
 		dbCursor = dbConn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 	except Exception as e:
 		print (f"No connection to DB (reason: {e})")
@@ -118,7 +159,7 @@ if (__name__ == "__main__"):
 		v2=vertex(geocode=g2) # Test vertex class
 		print(v1)
 		print("Testing Routing Class")
-		r1=routingRequest(v1, v2)
+		r1=route(v1, v2)
 		print(r1)
 		print("Unit tests for classes.py successful")
 	except Exception as e:
