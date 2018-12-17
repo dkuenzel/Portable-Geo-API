@@ -8,7 +8,7 @@ import psycopg2
 import psycopg2.extras
 
 ###################
-# Put this in routing.py if possible
+# Remove this if possible
 sys.path.append('..')
 from settings.config import config
 from settings.credentials import pgConnString # DB Connection: add file which contains standard psycopg2 conn string

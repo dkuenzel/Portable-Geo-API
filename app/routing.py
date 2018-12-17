@@ -1,25 +1,27 @@
 from lib.basic_types import *
 from lib.requests import *
 
-# Mockup request from config class
-from settings.config import config
-requestData = config.mockupRequest
-
-# Request
-
+# Mockup request
 # Origin
-originGeocode = geocode(longitude(5.501135), latitude(51.421882))
-origin = vertex(geocode=originGeocode)
+origin_lon = 5.501135
+origin_lat = 51.421882
+originGeocode = geocode(longitude(origin_lon), latitude(origin_lat))
+originVertex = vertex(geocode=originGeocode)
 
 # Destination
-destinationGeocode = geocode(longitude(5.459465), latitude(51.454974))
-destination = vertex(geocode=destinationGeocode)
+destination_lon = 5.459465
+destination_lat = 51.454974
+destinationGeocode = geocode(longitude(destination_lon), latitude(destination_lat))
+destinationVertex = vertex(geocode=destinationGeocode)
 
-# Routing request
-task = route(origin, destination)
+# Direct routing request
+task = route(originVertex, destinationVertex)
 # output
 for step in task.routingResponse:
 	print(step)
 print(task.routingDistance)
+
+# Inherit request class
+request = geoRequest(origin_lon, origin_lat, destination_lon, destination_lat)
 
 # Isochrone request
