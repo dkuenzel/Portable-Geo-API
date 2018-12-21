@@ -1,5 +1,6 @@
 __pycache__/
 __venv__/
+.idea/
 credentials*
 
 # Project files, i.e. `.project`, `.actionScriptProperties` and `.flexProperties`

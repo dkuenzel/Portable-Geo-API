@@ -23,7 +23,7 @@ destination_lat = 51.454974
 # Inherit request class and get results
 from lib.basic_types import *
 from lib.requests import *
-request = geoRequest(dbConn, config, origin_lon, origin_lat, destination_lon, destination_lat)
+request = geoRequest(pgConnString, config, origin_lon, origin_lat, destination_lon, destination_lat)
 request.p2p()
 print(request)
 
@@ -32,5 +32,4 @@ print(request)
 # TODO: n:n
 
 # API
-from api import app
-
+#from api import app
