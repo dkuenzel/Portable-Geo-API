@@ -7,21 +7,8 @@ import sys
 import psycopg2
 import psycopg2.extras
 
-###################
-# Remove this if possible
-sys.path.append('..')
-from settings.config import config
-from settings.credentials import pgConnString # DB Connection: add file which contains standard psycopg2 conn string
-# DB Connection
-try:
-	dbConn = psycopg2.connect(pgConnString)
-	dbCursor = dbConn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-except Exception as e:
-	print (f"No connection to DB (reason: {e})")
-	sys.exit()
-###################
 
-
+# Classes
 class longitude:
 	def __init__(self, val):
 		self.val = val
@@ -44,7 +31,10 @@ class geocode:
 		self.latitude = lat
 					
 class vertex:
-	def __init__(self, vertexId=None, geocode=None, dop=None):
+	def __init__(self, db, config, vertexId=None, geocode=None, dop=None):
+		self.dbConn = db
+		self.dbCursor = self.dbConn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+		self.config = config
 		self.vertexId = vertexId
 		self.geocode = geocode
 		self.dop = dop
@@ -62,17 +52,20 @@ class vertex:
 		
 		sql = f"\
 				SELECT id \
-				FROM {config.vertexTable} \
+				FROM {self.config.vertexTable} \
 				WHERE st_dwithin(geom_vertex, st_setsrid(st_makepoint({longitude},{latitude}),4326), {dop}) \
 				ORDER BY geom_vertex <-> st_setsrid(st_makepoint({longitude},{latitude}),4326) LIMIT 1;"
-		dbCursor.execute(sql)
-		result = dbCursor.fetchone()
+		self.dbCursor.execute(sql)
+		result = self.dbCursor.fetchone()
 		
 		return (result["id"])
 
 class route:
-	def __init__(self, originVertex, destinationVertex, dop=0.01, transportationMode = 0):
+	def __init__(self, db, config, originVertex, destinationVertex, dop=0.01, transportationMode = 0):
 		# Parameters
+		self.dbConn = db
+		self.dbCursor = self.dbConn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+		self.config = config
 		self.origin = originVertex
 		self.destination = destinationVertex
 		self.dop = dop
@@ -87,7 +80,7 @@ class route:
 		sql = f"\
 			CREATE TEMPORARY TABLE temp_routing_edges ON COMMIT DROP AS ( \
 			SELECT id, source, target, cost, reverse_cost, km \
-				FROM {config.edgesTable} \
+				FROM {self.config.edgesTable} \
 				WHERE geom_way && ST_Buffer( \
 				ST_Envelope(St_MakeLine( \
 					ST_SetSRID(ST_MakePoint({self.origin.geocode.longitude.val},{self.origin.geocode.latitude.val}),4326), \
@@ -99,9 +92,9 @@ class route:
 				('SELECT * FROM temp_routing_edges', {self.origin.vertexId}, {self.destination.vertexId}) AS ds \
 				LEFT JOIN temp_routing_edges AS tr ON (ds.edge = tr.id) \
 				ORDER BY seq;"
-		dbCursor.execute(sql)
-		result = dbCursor.fetchall()
-		dbConn.commit()
+		self.dbCursor.execute(sql)
+		result = self.dbCursor.fetchall()
+		self.dbConn.commit()
 		# Return result
 		return result
 		
@@ -155,12 +148,12 @@ if (__name__ == "__main__"):
 		g2 = geocode(x2,y2)
 		print(g1)
 		print("Testing Vertex Class")
-		v1=vertex(geocode=g1) # Test vertex class
-		v2=vertex(geocode=g2) # Test vertex class
+		v1=vertex(dbConn, config, geocode=g1) # Test vertex class
+		v2=vertex(dbConn, config, geocode=g2) # Test vertex class
 		print(v1)
 		print("Testing Routing Class")
-		r1=route(v1, v2)
+		r1=route(dbConn, config, v1, v2)
 		print(r1)
-		print("Unit tests for classes.py successful")
+		print("Unit tests for basic_types.py successful")
 	except Exception as e:
 		print(f"Test failed: {e}")

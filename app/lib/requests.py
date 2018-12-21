@@ -2,19 +2,22 @@ from lib.basic_types import *
 import re
 
 class geoRequest:
-	def __init__(self, origin_lon, origin_lat, destination_lon, destination_lat):
+	def __init__(self, db, config, origin_lon, origin_lat, destination_lon, destination_lat):
+		# Database connection
+		self.db = db
+		self.config = config
 		# Origin
 		self.originGeocode = geocode(longitude(origin_lon), latitude(origin_lat))
-		self.origin = vertex(geocode=self.originGeocode)
+		self.origin = vertex(self.db, self.config, geocode=self.originGeocode)
 		# Destination
 		self.destinationGeocode = geocode(longitude(destination_lon), latitude(destination_lat))
-		self.destination = vertex(geocode=self.destinationGeocode)
+		self.destination = vertex(self.db, self.config, geocode=self.destinationGeocode)
 		# Class vars
 		self.result = None
 
 	# Peer to Peer routing request
 	def p2p(self):
-		self.result = route(self.origin, self.destination)
+		self.result = route(self.db, self.config, self.origin, self.destination)
 	
 	# Output Functions
 	def getRaw(self):

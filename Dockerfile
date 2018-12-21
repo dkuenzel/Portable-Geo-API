@@ -30,4 +30,5 @@ RUN chmod 755 -R /home/apiuser/*
 # Tell docker that all future commands should run as the appuser user
 USER apiuser
 
+EXPOSE 5000
 ENTRYPOINT ["/home/apiuser/api.sh"]
