@@ -29,35 +29,58 @@ app.url_map.converters['float'] = FloatConverter
 @app.route('/')
 def help():
 	text = '<br>\
-	Format for peer 2 peer requests: "/p2p/integer:output/float:origin_lon/float:origin_lat/float:destination_lon/float:destination_lat<br>"\
+	Format for peer 2 peer requests: "/p2p/integer:outputFormat/float:origin_lon/float:origin_lat/float:destination_lon/float:destination_lat<br>"\
 	Where:<br>\
-	output = <br>\
-		0) Beautified<br>\
-		1) Raw output<br>\
-		2) Route only<br>\
-		3) Distance only'
+	outputFormat = <br>\
+		&nbsp;0) Beautified<br>\
+		&nbsp;1) Raw output<br>\
+		&nbsp;2) Route only (Not Implemented yet)<br>\
+		&nbsp;3) Distance only<br>\
+	<br>\
+	Format for isochrone requests: "/ich/integer:outputFormat/float:origin_lon/float:origin_lat<br>"\
+	Where:<br>\
+	outputFormat = <br>\
+		&nbsp;0) Beautified (Not Implemented yet)<br>\
+		&nbsp;1) Raw output (Not Implemented yet)<br>\
+		&nbsp;2) Nodes only<br>\
+		&nbsp;3) Geometry only<br>'
 	return text
 
 ## P2P Routing
 # Try: http://127.0.0.1:5000/p2p/0/5.125/51.31234/5.12/51.31
 @app.route('/p2p/0/<float:origin_lon>/<float:origin_lat>/<float:destination_lon>/<float:destination_lat>', methods=['GET'])
-def getBeautified(origin_lon, origin_lat, destination_lon, destination_lat):
-	request = geoRequest(pgConnString, config, origin_lon, origin_lat, destination_lon, destination_lat)
-	request.p2p()
-	return request.html()
+def p2pGetBeautified(origin_lon, origin_lat, destination_lon, destination_lat):
+	request = Route(pgConnString, config, origin_lon, origin_lat, destination_lon, destination_lat)
+	return request.getHtml()
 	
 # Try: http://127.0.0.1:5000/p2p/1/5.125/51.31234/5.12/51.31
 @app.route('/p2p/1/<float:origin_lon>/<float:origin_lat>/<float:destination_lon>/<float:destination_lat>', methods=['GET'])
-def getRawRoute(origin_lon, origin_lat, destination_lon, destination_lat):
-	request = geoRequest(pgConnString, config, origin_lon, origin_lat, destination_lon, destination_lat)
-	request.p2p()
+def p2pGetRawRoute(origin_lon, origin_lat, destination_lon, destination_lat):
+	request = Route(pgConnString, config, origin_lon, origin_lat, destination_lon, destination_lat)
 	return jsonify(request.getRaw())
-	
+
+## TODO: Implement Output Format 2 (Route only) for routing
+
 # Try: http://127.0.0.1:5000/p2p/2/5.125/51.31234/5.12/51.31
-@app.route('/p2p/2/<float:origin_lon>/<float:origin_lat>/<float:destination_lon>/<float:destination_lat>', methods=['GET'])
-def getRouteDistance(origin_lon, origin_lat, destination_lon, destination_lat):
-	request = geoRequest(pgConnString, config, origin_lon, origin_lat, destination_lon, destination_lat)
-	request.p2p()
+@app.route('/p2p/3/<float:origin_lon>/<float:origin_lat>/<float:destination_lon>/<float:destination_lat>', methods=['GET'])
+def p2pGetRouteDistance(origin_lon, origin_lat, destination_lon, destination_lat):
+	request = Route(pgConnString, config, origin_lon, origin_lat, destination_lon, destination_lat)
 	return jsonify(request.getDistance())
 
 ## Isochrones
+
+## TODO: Implement Output Format 0 (Beautified) for Isochrones
+
+## TODO: Implement Output Format 1 (Raw output) for Isochrones
+
+# Try: http://127.0.0.1:5000/ich/2/5.125/51.31234
+@app.route('/ich/2/<float:origin_lon>/<float:origin_lat>', methods=['GET'])
+def ichGetNodes(origin_lon, origin_lat):
+	request = Isochrone(pgConnString, config, origin_lon, origin_lat)
+	return jsonify(request.getNodes())
+
+# Try: http://127.0.0.1:5000/ich/3/5.125/51.31234
+@app.route('/ich/3/<float:origin_lon>/<float:origin_lat>', methods=['GET'])
+def ichGetGeometry(origin_lon, origin_lat):
+	request = Isochrone(pgConnString, config, origin_lon, origin_lat)
+	return jsonify(request.getGeometry())

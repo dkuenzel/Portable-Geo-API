@@ -23,12 +23,19 @@ destination_lat = 51.454974
 # Inherit request class and get results
 from lib.basic_types import *
 from lib.requests import *
-request = geoRequest(pgConnString, config, origin_lon, origin_lat, destination_lon, destination_lat)
-request.p2p()
-print(request)
 
-# TODO: Isochrone request
+# Routing request
+request = Route(pgConnString, config, origin_lon, origin_lat, destination_lon, destination_lat)
+print(request.resultsRaw)
+print(request.resultsDistance)
+
+# Isochrone request
+request = Isochrone(pgConnString, config, origin_lon, origin_lat)
+print(request.getNodes())
+print(request.getGeometry())
+
 # TODO: 1:n
+
 # TODO: n:n
 
 # API
