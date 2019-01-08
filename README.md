@@ -12,6 +12,7 @@ For portablility and ease of use the whole framework can be deployed using docke
 <h2>Installation Notes</h2>
 
 <h3>Snapshot DB</h3>
+
 ```bash
 pg_dump --format=c --create --no-owner --no-privileges --verbose --file=/halde/routing_graph_alpha.dump --dbname=osm_routing
 ```
