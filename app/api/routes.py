@@ -1,5 +1,6 @@
 from api import app
 from flask import jsonify
+from flask import send_from_directory
 from lib.basic_types import *
 from lib.requests import *
 
@@ -26,25 +27,13 @@ app.url_map.converters['float'] = FloatConverter
 
 ## Routes
 # Output help for requests on root
+# TODO: Implement folder to serve static files from which can be included in html (see /static/favicon folder for html tags)
+@app.route('/favicon.ico')
+def favicon():
+	return send_from_directory(config.static_url_path + '/favicon', 'favicon-32x32.png')
 @app.route('/')
 def help():
-	text = '<br>\
-	Format for peer 2 peer requests: "/p2p/integer:outputFormat/float:origin_lon/float:origin_lat/float:destination_lon/float:destination_lat<br>"\
-	Where:<br>\
-	outputFormat = <br>\
-		&nbsp;0) Beautified<br>\
-		&nbsp;1) Raw output<br>\
-		&nbsp;2) Route only (Not Implemented yet)<br>\
-		&nbsp;3) Distance only<br>\
-	<br>\
-	Format for isochrone requests: "/ich/integer:outputFormat/float:origin_lon/float:origin_lat<br>"\
-	Where:<br>\
-	outputFormat = <br>\
-		&nbsp;0) Beautified (Not Implemented yet)<br>\
-		&nbsp;1) Raw output (Not Implemented yet)<br>\
-		&nbsp;2) Nodes only<br>\
-		&nbsp;3) Geometry only<br>'
-	return text
+	return send_from_directory(config.static_url_path, 'documentation.html')
 
 ## P2P Routing
 # Try: http://127.0.0.1:5000/p2p/0/5.125/51.31234/5.12/51.31
