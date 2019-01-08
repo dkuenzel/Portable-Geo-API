@@ -1,1 +1,1 @@
-pgConnString = "dbname=osm_routing user=testa password=wa08ef328jfßpij sslmode=prefer host=172.21.52.97"
+pgConnString = "dbname=osm_routing user=selector password=selector sslmode=prefer host=10.1.3.194"
