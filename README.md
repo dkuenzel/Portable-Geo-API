@@ -12,20 +12,28 @@ For portablility and ease of use the whole framework can be deployed using docke
 <h2>Installation Notes</h2>
 
 <h3>Snapshot DB</h3>
+```bash
 pg_dump --format=c --create --no-owner --no-privileges --verbose --file=/halde/routing_graph_alpha.dump --dbname=osm_routing
+```
 
 <h3>Graph building</h3>
 
 Walkers guide schema: https://raw.githubusercontent.com/scheibler/WalkersGuide-Server/master/misc/osm2po_5.0.18.config
-`java -Xmx30g -jar osm2po-core-5.2.43-signed.jar prefix=world tileSize=45x45,1 ../planet-latest.osm.pbf`
+```bash
+java -Xmx30g -jar osm2po-core-5.2.43-signed.jar prefix=world tileSize=45x45,1 ../planet-latest.osm.pbf
+```
 
 <h3>Create DB</h3>
 
-`DB="osm_routing"; dropdb $DB; createdb $DB; psql -d $DB -c "BEGIN; CREATE EXTENSION postgis; CREATE EXTENSION pgRouting; END;"; logFile="/tmp/routing_sql.log";`
+```bash
+DB="osm_routing"; dropdb $DB; createdb $DB; psql -d $DB -c "BEGIN; CREATE EXTENSION postgis; CREATE EXTENSION pgRouting; END;"; logFile="/tmp/routing_sql.log";
+```
   
 <h3>Load data into DB</h3>
 
-`DB="osm_routing"; logFile="/tmp/routing_sql.log"; rm $logFile; touch $logFile; IFS=$'\n'; for filename in $(ls -1 /halde/split_osm/osm2po/world/*.sql); do (psql -d osm_routing --quiet --file $filename 2>&1 | sed -e "s#^#$(date) ${filename} ($$): #g" | tee -a $logFile) & done;`
+```bash
+DB="osm_routing"; logFile="/tmp/routing_sql.log"; rm $logFile; touch $logFile; IFS=$'\n'; for filename in $(ls -1 /halde/split_osm/osm2po/world/*.sql); do (psql -d osm_routing --quiet --file $filename 2>&1 | sed -e "s#^#$(date) ${filename} ($$): #g" | tee -a $logFile) & done;
+```
 
 <h3>DB ops</h3>
 
@@ -42,4 +50,4 @@ cluster world_2po_vertex using world_2po_vertex_geom_vertex_idx;
 
 <h3>Display isochrones in qgis</h3>
 
-select {PRIMARY KEY} as id, st_setsrid(st_geomfromewkt('{HEX-WKB}'), 4326) AS geom;
+>select {PRIMARY KEY} as id, st_setsrid(st_geomfromewkt('{HEX-WKB}'), 4326) AS geom;
