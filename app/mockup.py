@@ -26,13 +26,17 @@ from lib.requests import *
 
 # Routing request
 request = Route(pgConnString, config, origin_lon, origin_lat, destination_lon, destination_lat)
-print(request.resultsRaw)
-print(request.resultsDistance)
+print(request.getRaw())
+print(request.getRoute())
+print(request.getDistance())
+print(request.getHtml())
 
 # Isochrone request
 request = Isochrone(pgConnString, config, origin_lon, origin_lat)
 print(request.getNodes())
 print(request.getGeometry())
+print(request.getRaw())
+print(request.getHtml())
 
 # TODO: 1:n
 
