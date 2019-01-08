@@ -60,6 +60,14 @@ class Route (geoRequest):
 		return self.resultsRaw
 
 	# Output Functions
+	def getRoute(self):
+		route=[]
+		for way in self.resultsRaw:
+			if way['geom'] is not None:
+				route.append(way['geom'])
+		return route
+
+	# Output Functions
 	def getDistance(self):
 		return self.resultsDistance
 
@@ -80,7 +88,7 @@ class Route (geoRequest):
 		# Calculate route
 		sql = f"\
 			CREATE TEMPORARY TABLE temp_edges ON COMMIT DROP AS ( \
-			SELECT id, source, target, cost, reverse_cost, km \
+			SELECT id, source, target, cost, reverse_cost, km, geom_way \
 				FROM {self.config.edgesTable} \
 				WHERE geom_way && ST_Buffer( \
 				ST_Envelope(St_MakeLine( \
@@ -88,7 +96,7 @@ class Route (geoRequest):
 					ST_SetSRID(ST_MakePoint({self.destination.geocode.longitude.val},{self.destination.geocode.latitude.val}),4326))), \
 				0.01)); \
 				\
-				SELECT ds.*, tr.km \
+				SELECT ds.*, tr.km, ST_AsText(tr.geom_way) as geom \
 				FROM pgr_dijkstra \
 				('SELECT * FROM temp_edges', {self.origin.vertexId}, {self.destination.vertexId}) AS ds \
 				LEFT JOIN temp_edges AS tr ON (ds.edge = tr.id) \
