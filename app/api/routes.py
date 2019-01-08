@@ -61,10 +61,17 @@ def p2pGetRouteDistance(origin_lon, origin_lat, destination_lon, destination_lat
 	return jsonify(request.getDistance())
 
 ## Isochrones
+# Try: http://127.0.0.1:5000/ich/0/5.125/51.31234
+@app.route('/ich/0/<float:origin_lon>/<float:origin_lat>', methods=['GET'])
+def ichGetBeautified(origin_lon, origin_lat):
+	request = Isochrone(pgConnString, config, origin_lon, origin_lat)
+	return request.getHtml()
 
-## TODO: Implement Output Format 0 (Beautified) for Isochrones
-
-## TODO: Implement Output Format 1 (Raw output) for Isochrones
+# Try: http://127.0.0.1:5000/ich/1/5.125/51.31234
+@app.route('/ich/1/<float:origin_lon>/<float:origin_lat>', methods=['GET'])
+def ichGetRaw(origin_lon, origin_lat):
+	request = Isochrone(pgConnString, config, origin_lon, origin_lat)
+	return jsonify(request.getRaw())
 
 # Try: http://127.0.0.1:5000/ich/2/5.125/51.31234
 @app.route('/ich/2/<float:origin_lon>/<float:origin_lat>', methods=['GET'])

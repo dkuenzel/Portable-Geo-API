@@ -134,6 +134,29 @@ class Isochrone (geoRequest):
 		self.resultsNodes = None
 		self.resultsGeometry = None
 
+	def getRaw(self):
+		if self.resultsNodes is None or self.resultsGeometry is None:
+			self.resultsNodes = self.getNodes()
+			self.resultsGeometry = self.getGeometry()
+		output = {"nodes": self.resultsNodes, "geometry": self.resultsGeometry}
+		return output
+
+	def __str__(self):
+		if self.resultsNodes is None or self.resultsGeometry is None:
+			self.resultsNodes = self.getNodes()
+			self.resultsGeometry = self.getGeometry()
+		output = 'Nodes:'
+		for node in self.resultsNodes:
+			output = output + '\n' + str(node)
+		output = output + '\n' + 'Geometry:\n'
+		output = output + str(self.resultsGeometry)
+		return output
+
+	def getHtml(self):
+		output = self.__str__()
+		output = re.sub(r"\n", "<br>", output)
+		return output
+
 	def getNodes(self):
 		if self.resultsNodes is None:
 			self.resultsNodes = self._queryNodes()
@@ -193,7 +216,7 @@ class Isochrone (geoRequest):
 				FROM nodes LEFT JOIN {self.config.vertexTable} AS vertices ON (nodes.id = vertices.id) \
 			); \
 			\
-			SELECT pgr_pointsAsPolygon('SELECT id, x, y FROM vertex_geometries');"
+			SELECT ST_AsText(pgr_pointsAsPolygon('SELECT id, x, y FROM vertex_geometries'));"
 		self.dbCursor.execute(sql)
 		result = self.dbCursor.fetchall()
 		self.dbConn.commit()
