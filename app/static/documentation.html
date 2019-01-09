@@ -13,8 +13,9 @@
 	&nbsp;2) Route only (returned as array of wkt elements with EPSG 4326)<br>
 	&nbsp;3) Distance only<br>
 	<br>
-	Format for isochrone requests: "/ich/integer:outputFormat/float:origin_lon/float:origin_lat"<br>
+	Format for isochrone requests: "/ich/integer:outputFormat/float:maxRange/float:origin_lon/float:origin_lat"<br>
 	Where:<br>
+	maxRange = distance in hours<br>
 	outputFormat = <br>
 	&nbsp;0) Beautified (HTML)<br>
 	&nbsp;1) Raw output (JSON)<br>

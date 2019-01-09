@@ -61,26 +61,26 @@ def p2pGetRouteDistance(origin_lon, origin_lat, destination_lon, destination_lat
 	return jsonify(request.getDistance())
 
 ## Isochrones
-# Try: http://127.0.0.1:5000/ich/0/5.125/51.31234
-@app.route('/ich/0/<float:origin_lon>/<float:origin_lat>', methods=['GET'])
-def ichGetBeautified(origin_lon, origin_lat):
-	request = Isochrone(pgConnString, config, origin_lon, origin_lat)
+# Try: http://127.0.0.1:5000/ich/0/0.25/5.125/51.31234
+@app.route('/ich/0/<float:max_range>/<float:origin_lon>/<float:origin_lat>', methods=['GET'])
+def ichGetBeautified(max_range, origin_lon, origin_lat):
+	request = Isochrone(pgConnString, config, origin_lon, origin_lat, maxRange=max_range)
 	return request.getHtml()
 
-# Try: http://127.0.0.1:5000/ich/1/5.125/51.31234
-@app.route('/ich/1/<float:origin_lon>/<float:origin_lat>', methods=['GET'])
-def ichGetRaw(origin_lon, origin_lat):
-	request = Isochrone(pgConnString, config, origin_lon, origin_lat)
+# Try: http://127.0.0.1:5000/ich/1/0.25/5.125/51.31234
+@app.route('/ich/1/<float:max_range>/<float:origin_lon>/<float:origin_lat>', methods=['GET'])
+def ichGetRaw(max_range, origin_lon, origin_lat):
+	request = Isochrone(pgConnString, config, origin_lon, origin_lat, maxRange=max_range)
 	return jsonify(request.getRaw())
 
-# Try: http://127.0.0.1:5000/ich/2/5.125/51.31234
-@app.route('/ich/2/<float:origin_lon>/<float:origin_lat>', methods=['GET'])
-def ichGetNodes(origin_lon, origin_lat):
-	request = Isochrone(pgConnString, config, origin_lon, origin_lat)
+# Try: http://127.0.0.1:5000/ich/2/0.25/5.125/51.31234
+@app.route('/ich/2/<float:max_range>/<float:origin_lon>/<float:origin_lat>', methods=['GET'])
+def ichGetNodes(max_range, origin_lon, origin_lat):
+	request = Isochrone(pgConnString, config, origin_lon, origin_lat, maxRange=max_range)
 	return jsonify(request.getNodes())
 
-# Try: http://127.0.0.1:5000/ich/3/5.125/51.31234
-@app.route('/ich/3/<float:origin_lon>/<float:origin_lat>', methods=['GET'])
-def ichGetGeometry(origin_lon, origin_lat):
-	request = Isochrone(pgConnString, config, origin_lon, origin_lat)
+# Try: http://127.0.0.1:5000/ich/0.25/3/5.125/51.31234
+@app.route('/ich/3/<float:max_range>/<float:origin_lon>/<float:origin_lat>', methods=['GET'])
+def ichGetGeometry(max_range, origin_lon, origin_lat):
+	request = Isochrone(pgConnString, config, origin_lon, origin_lat, maxRange=max_range)
 	return jsonify(request.getGeometry())
