@@ -118,7 +118,7 @@ class Route (geoRequest):
 
 # Calculate Isochrone
 class Isochrone (geoRequest):
-	def __init__(self, pgConnString, config, originLon, originLat, dop=0.01, transportationMode=0, maxRange=0.45, directed=False,
+	def __init__(self, pgConnString, config, originLon, originLat, dop=0.01, transportationMode=0, maxRange=0.5, directed=False,
 				 reverseCost=False):
 		super().__init__(pgConnString, config, originLon, originLat, dop, transportationMode)
 		# DB + Config
@@ -172,7 +172,9 @@ class Isochrone (geoRequest):
 			CREATE TEMPORARY TABLE temp_edges ON COMMIT DROP AS ( \
 				SELECT id, source, target, cost, reverse_cost, km \
 				FROM {self.config.edgesTable} \
-				WHERE geom_way && ST_Buffer( \
+				WHERE \
+					clazz NOT IN (18, 19) \
+					AND geom_way && ST_Buffer( \
 					ST_SetSRID(ST_MakePoint({self.origin.geocode.longitude.val},{self.origin.geocode.latitude.val}),4326), \
 					0.1 \
 				));\
@@ -198,7 +200,9 @@ class Isochrone (geoRequest):
 			CREATE TEMPORARY TABLE temp_edges ON COMMIT DROP AS ( \
 				SELECT id, source, target, cost, reverse_cost, km \
 				FROM {self.config.edgesTable} \
-				WHERE geom_way && ST_Buffer( \
+				WHERE \
+					clazz NOT IN (18, 19) \
+					AND geom_way && ST_Buffer( \
 					ST_SetSRID(ST_MakePoint({self.origin.geocode.longitude.val},{self.origin.geocode.latitude.val}),4326), \
 					0.1 \
 				) \
