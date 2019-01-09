@@ -2,6 +2,7 @@ __pycache__/
 __venv__/
 .idea/
 credentials*
+app/settings/credentials.py
 
 # Project files, i.e. `.project`, `.actionScriptProperties` and `.flexProperties`
 # should NOT be excluded as they contain compiler settings and other important
