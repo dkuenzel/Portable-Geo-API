@@ -118,7 +118,7 @@ class Route (geoRequest):
 
 # Calculate Isochrone
 class Isochrone (geoRequest):
-	def __init__(self, pgConnString, config, originLon, originLat, dop=0.01, transportationMode=0, maxRange=10, directed=False,
+	def __init__(self, pgConnString, config, originLon, originLat, dop=0.01, transportationMode=0, maxRange=0.45, directed=False,
 				 reverseCost=False):
 		super().__init__(pgConnString, config, originLon, originLat, dop, transportationMode)
 		# DB + Config
