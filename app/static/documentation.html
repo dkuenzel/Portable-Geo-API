@@ -1,16 +1,10 @@
 <html>
 
 	<head>
-		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"
-   integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
-   crossorigin=""/>
-   	<script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"
-   integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
-   crossorigin=""></script>
-   	
+		<!-- Styles -->
    	<style>
 			div {
-				margin: 10px;
+				margin-top: 10px;
 			}
    		#mapid {
    			height: 40%;
@@ -22,10 +16,19 @@
    			width: 40px;
    		}
    	</style>
-   	
+		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"
+   integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+   crossorigin=""/>
+		<link rel="stylesheet" type="text/css" href="/static/vendor/accordion.css">
+   
+		<!-- Scripts -->
+   	<script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"
+   integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
+   crossorigin=""></script>
    	<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
    	<script src="/static/vendor/wicket.js" type="text/javascript"></script>
 		<script src="/static/vendor/wicket-leaflet.js" type="text/javascript"></script>
+		<script src="/static/vendor/accordion.js" type="text/javascript"></script>
    	
 	</head>
 
@@ -83,29 +86,36 @@
 			
 		</div>
 		
-		<div id="help">
-			<div id="p2p-doc" class="documentation-text">
-				<h3>Peer to Peer (<i>p2p</i>) requests</h3>
-				Request format: "http://host:port/p2p/integer:outputFormat/float:origin_lon/float:origin_lat/float:destination_lon/float:destination_lat"<br>
-				outputFormat:
-				<ul>
-					<li>0 = Beautified (HTML)
-					<li>1 = Raw output (JSON)
-					<li>2 = Distance only
-					<li>3 = Route only (returned as array of wkt elements with EPSG 4326)
-				</ul>
-			</div>
-			<div id="ich-doc" class="documentation-text">
-				<h3>Isochrone requests (<i>ich</i>) requests</h3>
-				Request format: "http://host:port/ich/integer:outputFormat/float:maxRange/float:origin_lon/float:origin_lat"<br>
-				maxRange: distance in hours<br>
-				outputFormat:
-				<ul>
-					<li>0 = Beautified (HTML)
-					<li>1 = Raw output (JSON)
-					<li>2 = Nodes only (JSON)
-					<li>3 = Geometry only (returned as WKT element with EPSG 4326)
-				</ul>
+		<hr>
+		
+		<div id="ss_menu">
+			<div id="help">
+				<div class="ss_button">Help</div>
+				<div class="ss_content">
+					<div id="p2p-doc" class="documentation-text">
+						<h3>Peer to Peer (<i>p2p</i>) requests</h3>
+						Request format: "http://host:port/p2p/integer:outputFormat/float:origin_lon/float:origin_lat/float:destination_lon/float:destination_lat"<br>
+						outputFormat:
+						<ul>
+							<li>0 = Beautified (HTML)
+							<li>1 = Raw output (JSON)
+							<li>2 = Distance only
+							<li>3 = Route only (returned as array of wkt elements with EPSG 4326)
+						</ul>
+					</div>
+					<div id="ich-doc" class="documentation-text">
+						<h3>Isochrone requests (<i>ich</i>) requests</h3>
+						Request format: "http://host:port/ich/integer:outputFormat/float:maxRange/float:origin_lon/float:origin_lat"<br>
+						maxRange: distance in hours<br>
+						outputFormat:
+						<ul>
+							<li>0 = Beautified (HTML)
+							<li>1 = Raw output (JSON)
+							<li>2 = Nodes only (JSON)
+							<li>3 = Geometry only (returned as WKT element with EPSG 4326)
+						</ul>
+					</div>
+				</div>
 			</div>
 		</div>
 		
@@ -120,8 +130,6 @@
 				id: 'mapbox.streets'
 			}).addTo(map);
 		</script>
-		
-		<hr>
 		
 		<div id="notification-area"></div>
 		<div id="result-area"></div>
