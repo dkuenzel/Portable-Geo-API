@@ -47,7 +47,8 @@
 			
 			<div id="query-builder-container">
 				<span id="general-options" class="ich-option p2p-option">
-					<i>http://host:port/</i>
+					<i><span id=base-url class="ich-option p2p-option">http://host:port</span></i>
+					<i>/</i>
 					<select id=api-function-select>
 						<option>p2p</option>
 						<option>ich</option>
@@ -123,8 +124,11 @@
 		<hr>
 		
 		<div id="notification-area"></div>
+		<div id="output-area"></div>
 		
 		<script>
+			// Get base API URL
+			var baseUrl = window.location.origin
 			// Container for the map markers 
 			var markers = {}
 			
@@ -177,11 +181,14 @@
 			}
 			
 			// Send request
-			
+			//TODO: Send Request and display results on map + output-area field
 			
 			// Listeners and stuff
 			$(document).ready( function () {
-				//Buttons
+				// Set base url in query builder
+				console.log(baseUrl)
+				$("#base-url").text(baseUrl)
+				// Buttons
 				$("#browser-location-as-origin").on( "click", function( event ) {  getLocation(); });
 				$("#origin-location-from-map").on( "click", function( event ) {  if (markers["browser"]) { map.removeLayer(markers["browser"]); }; activateCoordsFromMap("origin"); });
 				$("#destination-location-from-map").on( "click", function( event ) {  activateCoordsFromMap("destination"); });
@@ -193,12 +200,14 @@
 						$(".documentation-text").hide()
 						$("#p2p-doc").show()
 						$("#query-builder-container span").hide()
+						$("#destination-location-from-map").show()
 						$(".p2p-option").show()
 					}
 					else if ($("#api-function-select").val() == "ich") {
 						$(".documentation-text").hide()
 						$("#ich-doc").show()
 						$("#query-builder-container span").hide()
+						$("#destination-location-from-map").hide()
 						$(".ich-option").show()
 					}
 				});
