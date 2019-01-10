@@ -50,15 +50,15 @@ def p2pGetRawRoute(origin_lon, origin_lat, destination_lon, destination_lat):
 
 # Try: http://127.0.0.1:5000/p2p/2/5.125/51.31234/5.12/51.31
 @app.route('/p2p/2/<float:origin_lon>/<float:origin_lat>/<float:destination_lon>/<float:destination_lat>', methods=['GET'])
-def p2pGetRoute(origin_lon, origin_lat, destination_lon, destination_lat):
-	request = Route(pgConnString, config, origin_lon, origin_lat, destination_lon, destination_lat)
-	return jsonify(request.getRoute())
-
-# Try: http://127.0.0.1:5000/p2p/2/5.125/51.31234/5.12/51.31
-@app.route('/p2p/3/<float:origin_lon>/<float:origin_lat>/<float:destination_lon>/<float:destination_lat>', methods=['GET'])
 def p2pGetRouteDistance(origin_lon, origin_lat, destination_lon, destination_lat):
 	request = Route(pgConnString, config, origin_lon, origin_lat, destination_lon, destination_lat)
 	return jsonify(request.getDistance())
+
+# Try: http://127.0.0.1:5000/p2p/3/5.125/51.31234/5.12/51.31
+@app.route('/p2p/3/<float:origin_lon>/<float:origin_lat>/<float:destination_lon>/<float:destination_lat>', methods=['GET'])
+def p2pGetRoute(origin_lon, origin_lat, destination_lon, destination_lat):
+	request = Route(pgConnString, config, origin_lon, origin_lat, destination_lon, destination_lat)
+	return jsonify(request.getRoute())
 
 ## Isochrones
 # Try: http://127.0.0.1:5000/ich/0/0.25/5.125/51.31234
