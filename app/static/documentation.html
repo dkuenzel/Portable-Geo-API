@@ -47,14 +47,14 @@
 			
 			<div id="query-builder-container">
 				<span id="general-options" class="ich-option p2p-option">
-					<i><span id=base-url class="ich-option p2p-option">http://host:port</span></i>
+					<input type="text" id="base-url">
 					<i>/</i>
-					<select id=api-function-select>
+					<select id="api-function-select">
 						<option>p2p</option>
 						<option>ich</option>
 					</select>
 					<i>/</i>
-					<select id=output-format-select>
+					<select id="output-format-select">
 						<option>0</option>
 						<option>1</option>
 						<option>2</option>
@@ -77,9 +77,8 @@
 					<i>/</i>
 					<input type="text" id="destination-latitude-field" class="coordinate-input-field" placeholder="destination latitude">
 				</span>
-				<br>
-				<input type="button" value="send request" id="send-request-button">
 			</div>
+			<input type="button" value="send request" id="send-request-button">
 			
 		</div>
 		
@@ -124,7 +123,7 @@
 		<hr>
 		
 		<div id="notification-area"></div>
-		<div id="output-area"></div>
+		<div id="result-area"></div>
 		
 		<script>
 			// Get base API URL
@@ -182,12 +181,21 @@
 			
 			// Send request
 			//TODO: Send Request and display results on map + output-area field
+			function sendRequest() {
+				apiFunction = $("#api-function-select").val()
+				if (apiFunction == "p2p") {
+					requestString = $("#base-url").val() + "/" + $("#api-function-select").val() + "/" + $("#output-format-select").val() + "/" + $("#origin-longitude-field").val() + "/" + $("#origin-latitude-field").val() + "/" + $("#destination-longitude-field").val() + "/" + $("#destination-latitude-field").val()
+				}
+				if (apiFunction == "ich") {
+					requestString = $("#base-url").val() + "/" + $("#api-function-select").val() + "/" + $("#output-format-select").val() + "/" + $("#range-field").val() + "/" + $("#origin-longitude-field").val() + "/" + $("#origin-latitude-field").val()
+				}
+				$("#result-area").text(requestString)
+			}
 			
 			// Listeners and stuff
 			$(document).ready( function () {
 				// Set base url in query builder
-				console.log(baseUrl)
-				$("#base-url").text(baseUrl)
+				$("#base-url").val(baseUrl)
 				// Buttons
 				$("#browser-location-as-origin").on( "click", function( event ) {  getLocation(); });
 				$("#origin-location-from-map").on( "click", function( event ) {  if (markers["browser"]) { map.removeLayer(markers["browser"]); }; activateCoordsFromMap("origin"); });
