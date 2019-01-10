@@ -22,13 +22,19 @@
 	</head>
 
 	<body>
+		<div id="header">	
+		<h1>API documentation and Sandbox</h1>
+		<hr>
+		</div>
+		
+	
+		<div id="mapid"></div>
+		
 		<div id="input">
-			<label for="request-input-field">Request</label>
+			<label for="request-input-field">Request: <i>http://host:port/</i></label>
 			<input type="text" id="request-input-field">
 			<input type="button" value="send request" id="send-request-button">
 		</div>
-	
-		<div id="mapid"></div>
 		
 		<div id="help">
 			<p id="p2p-doc" class="documentation-text">
@@ -66,6 +72,28 @@
 					'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
 				id: 'mapbox.streets'
 			}).addTo(mymap);
+		</script>
+		
+		<div id="user-location"><>
+		
+		<script>
+			var x = document.getElementById("user-location");
+			function getLocation() {
+			  if (navigator.geolocation) {
+				 navigator.geolocation.getCurrentPosition(showPosition);
+			  } else {
+				 x.innerHTML = "Geolocation is not supported by this browser.";
+			  }
+			}
+
+			function showPosition(position) {
+			  x.innerHTML = "Latitude: " + position.coords.latitude + 
+			  "<br>Longitude: " + position.coords.longitude; 
+			}
+			
+			getLocation();
+			showPosition();
+			
 		</script>
 
 	</body>
