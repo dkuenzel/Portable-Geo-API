@@ -5,6 +5,7 @@ from lib.basic_types import *
 from lib.requests import *
 
 ################### TODO: Outsource db connection to db handler class? Ideally outsource the cursors from the classes as well?
+import os
 import sys
 import psycopg2
 import psycopg2.extras
@@ -25,7 +26,24 @@ class FloatConverter(BaseFloatConverter):
 	regex = r'-?\d+(\.\d+)?'
 app.url_map.converters['float'] = FloatConverter
 
-## Routes
+
+## Routes for static content
+print (config.static_url_path)
+#config.static_url_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'static')
+#print (config.static_url_path)
+@app.route('/static/vendor/<string:filename>', methods=['GET'])
+def getVendorLib(filename):
+    return send_from_directory(config.static_url_path + '/vendor', filename)
+@app.route('/static/maps/<string:filename>', methods=['GET'])
+def getMapImage(filename):
+    return send_from_directory(config.static_url_path + '/maps', filename)
+# Workaround TODO: Place proper tags in html and link to favicon folder instead
+@app.route('/static/favicon/<string:filename>', methods=['GET'])
+def getFavicon(filename):
+    return send_from_directory(config.static_url_path + '/favicon', filename)
+
+
+## Dynamic Routes
 # Output help for requests on root
 # TODO: Implement folder to serve static files from which can be included in html (see /static/favicon folder for html tags)
 @app.route('/favicon.ico')
