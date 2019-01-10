@@ -202,10 +202,13 @@
 					url: request,
 					cache: false
 				})
-					.done(function(html) {
-					if ($("#output-format-select").val() == 0) {$("#result-area").text(html)}
-					if ($("#output-format-select").val() == 1 || $("#output-format-select").val() == 2) {$("#result-area").text(html)}
-					if ($("#output-format-select").val() == 3) {$("#result-area").text(html)}
+					.done(function(result) {
+					if ($("#output-format-select").val() == 0) {$("#result-area").html(result)}
+					if ($("#output-format-select").val() == 1 || $("#output-format-select").val() == 2) {
+						result = JSON.stringify(result, null, '\t');
+						$("#result-area").text(result)
+					}
+					if ($("#output-format-select").val() == 3) {$("#result-area").text(result)}
 				});
 			}
 			//
