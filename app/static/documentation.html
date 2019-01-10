@@ -18,6 +18,9 @@
    		.coordinate-input-field {
    			width: 150px;
    		}
+   		.short-number-input {
+   			width: 40px;
+   		}
    	</style>
    	
    	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
@@ -42,26 +45,32 @@
 			<input type="button" value="pick origin from map" id="origin-location-from-map">
 			<input type="button" value="pick destination from map" id="destination-location-from-map">
 			
-			<div id="query-builder-div">
-				<i>http://host:port/</i>
-				<select id=api-function-select>
-					<option>p2p</option>
-					<option>ich</option>
-				</select>
-				<i>/</i>
-				<select id=output-format-select>
-					<option>0</option>
-					<option>1</option>
-					<option>2</option>
-					<option>3</option>
-				</select>
-				<i>/</i>
-				<span id="origin-coordinates">
+			<div id="query-builder-container">
+				<span id="general-options" class="ich-option p2p-option">
+					<i>http://host:port/</i>
+					<select id=api-function-select>
+						<option>p2p</option>
+						<option>ich</option>
+					</select>
+					<i>/</i>
+					<select id=output-format-select>
+						<option>0</option>
+						<option>1</option>
+						<option>2</option>
+						<option>3</option>
+					</select>
+					<i>/</i>
+				</span>
+				<span id="range-options" class="ich-option">
+					<input type="text" id="range-field" placeholder="range" class="short-number-input">
+					<i>/</i>
+				</span>
+				<span id="origin-coordinates" class="p2p-option ich-option">
 					<input type="text" id="origin-longitude-field" class="coordinate-input-field" placeholder="origin longitude">
 					<i>/</i>
 					<input type="text" id="origin-latitude-field" class="coordinate-input-field" placeholder="origin latitude">
 				</span>
-				<span id="destination-coordinates">
+				<span id="destination-coordinates" class="p2p-option">
 					<i>/</i>
 					<input type="text" id="destination-longitude-field" class="coordinate-input-field" placeholder="destination longitude">
 					<i>/</i>
@@ -116,6 +125,9 @@
 		<div id="notification-area"></div>
 		
 		<script>
+			// Container for the map markers 
+			var markers = {}
+			
 			// Browser coordinates
 			var x = document.getElementById("notification-area");
 			function getLocation() {
@@ -127,7 +139,6 @@
 			}
 
 			function showPosition(position) {
-				//x.innerHTML = "Your browser location: " + position.coords.longitude + "/" + position.coords.latitude;
 				browserGeocode = {"longitude": position.coords.longitude, "latitude": position.coords.latitude}
 				addBrowserLocationAsOrigin(browserGeocode)
 			}
@@ -138,11 +149,13 @@
 				$("#origin-longitude-field").val(longitude)
 				$("#origin-latitude-field").val(latitude)
 				map.flyTo([latitude, longitude], 13)
-				L.marker([latitude, longitude]).addTo(map).bindPopup('Your Browser Location (Maybe highly inaccurate)').openPopup();
+				if (markers["origin"]) { map.removeLayer(markers["origin"]); }
+				if (markers["browser"]) { map.removeLayer(markers["browser"]); }
+				markers["browser"] = L.marker([latitude, longitude])
+				markers["browser"].addTo(map).bindPopup('Your Browser Location (Maybe highly inaccurate)').openPopup();
 			}
 			
 			// Coordinates from map
-			var markers = {}
 			var field = ""
 			function getCoordsFromMap (e) {
 				coord = e.latlng;
@@ -163,25 +176,30 @@
 				map.off('click', function(e){ getCoordsFromMap(e) });
 			}
 			
+			// Send request
+			
+			
+			// Listeners and stuff
 			$(document).ready( function () {
 				//Buttons
 				$("#browser-location-as-origin").on( "click", function( event ) {  getLocation(); });
-				$("#origin-location-from-map").on( "click", function( event ) {  activateCoordsFromMap("origin"); });
+				$("#origin-location-from-map").on( "click", function( event ) {  if (markers["browser"]) { map.removeLayer(markers["browser"]); }; activateCoordsFromMap("origin"); });
 				$("#destination-location-from-map").on( "click", function( event ) {  activateCoordsFromMap("destination"); });
+				$("#send-request-button").on("click", function( event ) { sendRequest() })
 				
 				// Query builder listeners
 				$("#api-function-select").on( "change", function( event ) {  
 					if ($("#api-function-select").val() == "p2p") {
 						$(".documentation-text").hide()
 						$("#p2p-doc").show()
-						$("#origin-coordinates").show()
-						$("#destination-coordinates").show()
+						$("#query-builder-container span").hide()
+						$(".p2p-option").show()
 					}
 					else if ($("#api-function-select").val() == "ich") {
 						$(".documentation-text").hide()
 						$("#ich-doc").show()
-						$("#origin-coordinates").show()
-						$("#destination-coordinates").hide()
+						$("#query-builder-container span").hide()
+						$(".ich-option").show()
 					}
 				});
 				$("#api-function-select").change()  // Update view
