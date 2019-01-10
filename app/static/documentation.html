@@ -23,7 +23,7 @@
    		}
    	</style>
    	
-   	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+   	<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 
    	
 	</head>
@@ -63,19 +63,19 @@
 					<i>/</i>
 				</span>
 				<span id="range-options" class="ich-option">
-					<input type="text" id="range-field" placeholder="range" class="short-number-input">
+					<input type="number" id="range-field" placeholder="range (h)" value=0.5 class="short-number-input">
 					<i>/</i>
 				</span>
 				<span id="origin-coordinates" class="p2p-option ich-option">
-					<input type="text" id="origin-longitude-field" class="coordinate-input-field" placeholder="origin longitude">
+					<input type="number" id="origin-longitude-field" class="coordinate-input-field" placeholder="origin longitude">
 					<i>/</i>
-					<input type="text" id="origin-latitude-field" class="coordinate-input-field" placeholder="origin latitude">
+					<input type="number" id="origin-latitude-field" class="coordinate-input-field" placeholder="origin latitude">
 				</span>
 				<span id="destination-coordinates" class="p2p-option">
 					<i>/</i>
-					<input type="text" id="destination-longitude-field" class="coordinate-input-field" placeholder="destination longitude">
+					<input type="number" id="destination-longitude-field" class="coordinate-input-field" placeholder="destination longitude">
 					<i>/</i>
-					<input type="text" id="destination-latitude-field" class="coordinate-input-field" placeholder="destination latitude">
+					<input type="number" id="destination-latitude-field" class="coordinate-input-field" placeholder="destination latitude">
 				</span>
 			</div>
 			<input type="button" value="send request" id="send-request-button">
@@ -128,6 +128,7 @@
 		<script>
 			// Get base API URL
 			var baseUrl = window.location.origin
+			
 			// Container for the map markers 
 			var markers = {}
 			
@@ -179,9 +180,8 @@
 				map.off('click', function(e){ getCoordsFromMap(e) });
 			}
 			
-			// Send request
-			//TODO: Send Request and display results on map + output-area field
-			function sendRequest() {
+			// Build request from input fields
+			function buildRequest() {
 				apiFunction = $("#api-function-select").val()
 				if (apiFunction == "p2p") {
 					requestString = $("#base-url").val() + "/" + $("#api-function-select").val() + "/" + $("#output-format-select").val() + "/" + $("#origin-longitude-field").val() + "/" + $("#origin-latitude-field").val() + "/" + $("#destination-longitude-field").val() + "/" + $("#destination-latitude-field").val()
@@ -189,8 +189,28 @@
 				if (apiFunction == "ich") {
 					requestString = $("#base-url").val() + "/" + $("#api-function-select").val() + "/" + $("#output-format-select").val() + "/" + $("#range-field").val() + "/" + $("#origin-longitude-field").val() + "/" + $("#origin-latitude-field").val()
 				}
-				$("#result-area").text(requestString)
+				$("#notification-area").text(requestString)
+				
+				return requestString
 			}
+			
+			// Ajax request
+			function sendRequest() {
+				request = buildRequest()
+				$("#result-area").text("loading data...");
+				$.ajax({
+					url: request,
+					cache: false
+				})
+					.done(function(html) {
+					if ($("#output-format-select").val() == 0) {$("#result-area").text(html)}
+					if ($("#output-format-select").val() == 1 || $("#output-format-select").val() == 2) {$("#result-area").text(html)}
+					if ($("#output-format-select").val() == 3) {$("#result-area").text(html)}
+				});
+			}
+			//
+			
+			//TODO: Send Request and display results on map + output-area field
 			
 			// Listeners and stuff
 			$(document).ready( function () {
