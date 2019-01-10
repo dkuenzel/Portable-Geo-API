@@ -35,9 +35,13 @@
 		<div id="mapid"></div>
 		
 		<div id="input">
+		
 			<label for="query-builder-div">Build your request:</label>
 			<br>
 			<input type="button" value="use browser location as origin" id="browser-location-as-origin">
+			<input type="button" value="pick origin from map" id="origin-location-from-map">
+			<input type="button" value="pick destination from map" id="destination-location-from-map">
+			
 			<div id="query-builder-div">
 				<i>http://host:port/</i>
 				<select id=api-function-select>
@@ -61,11 +65,12 @@
 					<i>/</i>
 					<input type="text" id="destination-longitude-field" class="coordinate-input-field" placeholder="destination longitude">
 					<i>/</i>
-					<input type="text" id="destination-longitude-field" class="coordinate-input-field" placeholder="destination longitude">
+					<input type="text" id="destination-latitude-field" class="coordinate-input-field" placeholder="destination latitude">
 				</span>
 				<br>
 				<input type="button" value="send request" id="send-request-button">
 			</div>
+			
 		</div>
 		
 		<div id="help">
@@ -111,6 +116,7 @@
 		<div id="notification-area"></div>
 		
 		<script>
+			// Browser coordinates
 			var x = document.getElementById("notification-area");
 			function getLocation() {
 				if (navigator.geolocation) {
@@ -135,26 +141,51 @@
 				L.marker([latitude, longitude]).addTo(map).bindPopup('Your Browser Location (Maybe highly inaccurate)').openPopup();
 			}
 			
-			///// put in on Ready function ////
-			$("#browser-location-as-origin").on( "click", function( event ) {  getLocation(); });
+			// Coordinates from map
+			var markers = {}
+			var field = ""
+			function getCoordsFromMap (e) {
+				coord = e.latlng;
+				var latitude = coord.lat;
+				var longitude = coord.lng;
+				$("#" + field + "-longitude-field").val(longitude)
+				$("#" + field + "-latitude-field").val(latitude)
+				if (markers[field]) { map.removeLayer(markers[field]); }
+				markers[field] = L.marker([latitude, longitude])
+				markers[field].addTo(map).bindPopup('Your ' + field + ' location').openPopup();
+				deactivateCoordsFromMap();
+			}
+			function activateCoordsFromMap (e) {
+				field = e
+				map.on('click', function(e){ getCoordsFromMap(e) });
+			}
+			function deactivateCoordsFromMap () { 
+				map.off('click', function(e){ getCoordsFromMap(e) });
+			}
 			
-			// Query builder listeners
-			$("#api-function-select").on( "change", function( event ) {  
-				if ($("#api-function-select").val() == "p2p") {
-					$(".documentation-text").hide()
-					$("#p2p-doc").show()
-					$("#origin-coordinates").show()
-					$("#destination-coordinates").show()
-				}
-				else if ($("#api-function-select").val() == "ich") {
-					$(".documentation-text").hide()
-					$("#ich-doc").show()
-					$("#origin-coordinates").show()
-					$("#destination-coordinates").hide()
-				}
+			$(document).ready( function () {
+				//Buttons
+				$("#browser-location-as-origin").on( "click", function( event ) {  getLocation(); });
+				$("#origin-location-from-map").on( "click", function( event ) {  activateCoordsFromMap("origin"); });
+				$("#destination-location-from-map").on( "click", function( event ) {  activateCoordsFromMap("destination"); });
+				
+				// Query builder listeners
+				$("#api-function-select").on( "change", function( event ) {  
+					if ($("#api-function-select").val() == "p2p") {
+						$(".documentation-text").hide()
+						$("#p2p-doc").show()
+						$("#origin-coordinates").show()
+						$("#destination-coordinates").show()
+					}
+					else if ($("#api-function-select").val() == "ich") {
+						$(".documentation-text").hide()
+						$("#ich-doc").show()
+						$("#origin-coordinates").show()
+						$("#destination-coordinates").hide()
+					}
+				});
+				$("#api-function-select").change()  // Update view
 			});
-			$("#api-function-select").change()  // Update view
-			//// end on ready function ////
 			
 		</script>
 
