@@ -15,8 +15,12 @@
    		#mapid {
    			height: 25%;
    		}
+   		.coordinate-input-field {
+   			width: 150px;
+   		}
    	</style>
    	
+   	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
 
    	
 	</head>
@@ -31,13 +35,41 @@
 		<div id="mapid"></div>
 		
 		<div id="input">
-			<label for="request-input-field">Request: <i>http://host:port/</i></label>
-			<input type="text" id="request-input-field">
-			<input type="button" value="send request" id="send-request-button">
+			<label for="query-builder-div">Build your request:</label>
+			<br>
+			<input type="button" value="use browser location as origin" id="browser-location-as-origin">
+			<div id="query-builder-div">
+				<i>http://host:port/</i>
+				<select id=api-function-select>
+					<option>p2p</option>
+					<option>ich</option>
+				</select>
+				<i>/</i>
+				<select id=output-format-select>
+					<option>0</option>
+					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+				</select>
+				<i>/</i>
+				<span id="origin-coordinates">
+					<input type="text" id="origin-longitude-field" class="coordinate-input-field" placeholder="origin longitude">
+					<i>/</i>
+					<input type="text" id="origin-latitude-field" class="coordinate-input-field" placeholder="origin latitude">
+				</span>
+				<span id="destination-coordinates">
+					<i>/</i>
+					<input type="text" id="destination-longitude-field" class="coordinate-input-field" placeholder="destination longitude">
+					<i>/</i>
+					<input type="text" id="destination-longitude-field" class="coordinate-input-field" placeholder="destination longitude">
+				</span>
+				<br>
+				<input type="button" value="send request" id="send-request-button">
+			</div>
 		</div>
 		
 		<div id="help">
-			<p id="p2p-doc" class="documentation-text">
+			<div id="p2p-doc" class="documentation-text">
 				<h3>Peer to Peer (<i>p2p</i>) requests</h3>
 				Request format: "http://host:port/p2p/integer:outputFormat/float:origin_lon/float:origin_lat/float:destination_lon/float:destination_lat"<br>
 				outputFormat:
@@ -47,8 +79,8 @@
 					<li>2 = Distance only
 					<li>3 = Route only (returned as array of wkt elements with EPSG 4326)
 				</ul>
-			</p>
-			<p id="ich-doc" class="documentation-text">
+			</div>
+			<div id="ich-doc" class="documentation-text">
 				<h3>Isochrone requests (<i>ich</i>) requests</h3>
 				Request format: "http://host:port/ich/integer:outputFormat/float:maxRange/float:origin_lon/float:origin_lat"<br>
 				maxRange: distance in hours<br>
@@ -59,11 +91,11 @@
 					<li>2 = Nodes only (JSON)
 					<li>3 = Geometry only (returned as WKT element with EPSG 4326)
 				</ul>
-			</p>
+			</div>
 		</div>
 		
 	  	<script>
-			var mymap = L.map('mapid').setView([51.505, -0.09], 13);
+			var map = L.map('mapid').setView([51.505, -0.09], 13);
 
 			L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
 				maxZoom: 18,
@@ -71,28 +103,58 @@
 					'<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
 					'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
 				id: 'mapbox.streets'
-			}).addTo(mymap);
+			}).addTo(map);
 		</script>
 		
-		<div id="user-location"><>
+		<hr>
+		
+		<div id="notification-area"></div>
 		
 		<script>
-			var x = document.getElementById("user-location");
+			var x = document.getElementById("notification-area");
 			function getLocation() {
-			  if (navigator.geolocation) {
-				 navigator.geolocation.getCurrentPosition(showPosition);
-			  } else {
-				 x.innerHTML = "Geolocation is not supported by this browser.";
-			  }
+				if (navigator.geolocation) {
+					navigator.geolocation.getCurrentPosition(showPosition);
+				} else {
+					x.innerHTML = "Geolocation is not supported by this browser.";
+				}
 			}
 
 			function showPosition(position) {
-			  x.innerHTML = "Latitude: " + position.coords.latitude + 
-			  "<br>Longitude: " + position.coords.longitude; 
+				//x.innerHTML = "Your browser location: " + position.coords.longitude + "/" + position.coords.latitude;
+				browserGeocode = {"longitude": position.coords.longitude, "latitude": position.coords.latitude}
+				addBrowserLocationAsOrigin(browserGeocode)
 			}
 			
-			getLocation();
-			showPosition();
+			function addBrowserLocationAsOrigin (browserGeocode) {
+				longitude = browserGeocode.longitude
+				latitude = browserGeocode.latitude
+				$("#origin-longitude-field").val(longitude)
+				$("#origin-latitude-field").val(latitude)
+				map.flyTo([latitude, longitude], 13)
+				L.marker([latitude, longitude]).addTo(map).bindPopup('Your Browser Location (Maybe highly inaccurate)').openPopup();
+			}
+			
+			///// put in on Ready function ////
+			$("#browser-location-as-origin").on( "click", function( event ) {  getLocation(); });
+			
+			// Query builder listeners
+			$("#api-function-select").on( "change", function( event ) {  
+				if ($("#api-function-select").val() == "p2p") {
+					$(".documentation-text").hide()
+					$("#p2p-doc").show()
+					$("#origin-coordinates").show()
+					$("#destination-coordinates").show()
+				}
+				else if ($("#api-function-select").val() == "ich") {
+					$(".documentation-text").hide()
+					$("#ich-doc").show()
+					$("#origin-coordinates").show()
+					$("#destination-coordinates").hide()
+				}
+			});
+			$("#api-function-select").change()  // Update view
+			//// end on ready function ////
 			
 		</script>
 
