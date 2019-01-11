@@ -35,7 +35,7 @@ def getVendorLib(filename):
 	return send_from_directory(config.static_url_path + '/vendor', filename)
 @app.route('/static/maps/<string:filename>', methods=['GET'])
 def getMapImage(filename):
-	return send_from_directory(config.static_url_path + '/maps', filename)
+	return send_from_directory(config.static_url_path + '/map-images', filename)
 # Workaround TODO: Place proper tags in html and link to favicon folder instead
 @app.route('/static/favicon/<string:filename>', methods=['GET'])
 def getFavicon(filename):
@@ -43,14 +43,12 @@ def getFavicon(filename):
 
 
 ## Dynamic Routes
-# Output help for requests on root
-# TODO: Implement folder to serve static files from which can be included in html (see /static/favicon folder for html tags)
-@app.route('/favicon.ico')
-def favicon():
-	return send_from_directory(config.static_url_path + '/favicon', 'favicon-32x32.png')
+# Output documentation with sandbox for requests on root
+
 @app.route('/')
 def help():
 	return send_from_directory(config.static_url_path, 'documentation.html')
+
 
 ## P2P Routing
 # Try: http://127.0.0.1:5000/p2p/0/5.125/51.31234/5.12/51.31
@@ -76,6 +74,7 @@ def p2pGetRouteDistance(origin_lon, origin_lat, destination_lon, destination_lat
 def p2pGetRoute(origin_lon, origin_lat, destination_lon, destination_lat):
 	request = Route(pgConnString, config, origin_lon, origin_lat, destination_lon, destination_lat)
 	return jsonify(request.getRoute())
+
 
 ## Isochrones
 # Try: http://127.0.0.1:5000/ich/0/0.25/5.125/51.31234
