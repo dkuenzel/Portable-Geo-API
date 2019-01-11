@@ -30,13 +30,22 @@ app.url_map.converters['float'] = FloatConverter
 ## Routes for static content
 #config.static_url_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'static')
 #print (config.static_url_path)
+## Documentation
+@app.route('/static/documentation/<string:filename>', methods=['GET'])
+def getDocumentation(filename):
+	return send_from_directory(config.static_url_path + '/documentation', filename)
+
+## External libraries
 @app.route('/static/vendor/<string:filename>', methods=['GET'])
 def getVendorLib(filename):
 	return send_from_directory(config.static_url_path + '/vendor', filename)
+
+## Images
 @app.route('/static/images/<string:filename>', methods=['GET'])
 def getMapImage(filename):
 	return send_from_directory(config.static_url_path + '/images', filename)
-# Workaround TODO: Place proper tags in html and link to favicon folder instead
+
+## Favicon
 @app.route('/static/favicon/<string:filename>', methods=['GET'])
 def getFavicon(filename):
 	return send_from_directory(config.static_url_path + '/favicon', filename)
@@ -47,7 +56,7 @@ def getFavicon(filename):
 
 @app.route('/')
 def help():
-	return send_from_directory(config.static_url_path, 'documentation.html')
+	return send_from_directory(config.static_url_path + '/documentation', 'documentation.html')
 
 
 ## P2P Routing
