@@ -33,9 +33,9 @@ app.url_map.converters['float'] = FloatConverter
 @app.route('/static/vendor/<string:filename>', methods=['GET'])
 def getVendorLib(filename):
 	return send_from_directory(config.static_url_path + '/vendor', filename)
-@app.route('/static/maps/<string:filename>', methods=['GET'])
+@app.route('/static/images/<string:filename>', methods=['GET'])
 def getMapImage(filename):
-	return send_from_directory(config.static_url_path + '/map-images', filename)
+	return send_from_directory(config.static_url_path + '/images', filename)
 # Workaround TODO: Place proper tags in html and link to favicon folder instead
 @app.route('/static/favicon/<string:filename>', methods=['GET'])
 def getFavicon(filename):
