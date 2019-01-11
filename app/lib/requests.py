@@ -61,11 +61,12 @@ class Route (geoRequest):
 
 	# Output Functions
 	def getRoute(self):
-		route=[]
+		routes=[]
 		for way in self.resultsRaw:
 			if way['geom'] is not None:
-				route.append(way['geom'])
-		return route
+				routes.append(way['geom'])
+		return routes
+		#return '\n'.join(routes)
 
 	# Output Functions
 	def getDistance(self):

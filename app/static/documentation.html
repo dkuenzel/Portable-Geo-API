@@ -62,7 +62,7 @@
 						<option>0</option>
 						<option>1</option>
 						<option>2</option>
-						<option>3</option>
+						<option selected>3</option>
 					</select>
 					<i>/</i>
 				</span>
@@ -71,15 +71,15 @@
 					<i>/</i>
 				</span>
 				<span id="origin-coordinates" class="p2p-option ich-option">
-					<input type="number" id="origin-longitude-field" class="coordinate-input-field" placeholder="origin longitude">
+					<input type="number" id="origin-longitude-field" class="coordinate-input-field" placeholder="origin longitude" value=6.750411987304688>
 					<i>/</i>
-					<input type="number" id="origin-latitude-field" class="coordinate-input-field" placeholder="origin latitude">
+					<input type="number" id="origin-latitude-field" class="coordinate-input-field" placeholder="origin latitude" value=51.208549699452>
 				</span>
 				<span id="destination-coordinates" class="p2p-option">
 					<i>/</i>
-					<input type="number" id="destination-longitude-field" class="coordinate-input-field" placeholder="destination longitude">
+					<input type="number" id="destination-longitude-field" class="coordinate-input-field" placeholder="destination longitude" value=6.781139373779297>
 					<i>/</i>
-					<input type="number" id="destination-latitude-field" class="coordinate-input-field" placeholder="destination latitude">
+					<input type="number" id="destination-latitude-field" class="coordinate-input-field" placeholder="destination latitude" value=51.20876513645167>
 				</span>
 			</div>
 			<input type="button" value="send request" id="send-request-button">
@@ -212,20 +212,32 @@
 					cache: false
 				})
 					.done(function(result) {
-						if ($("#output-format-select").val() == 0) {$("#result-area").html(result)}
-						if ($("#output-format-select").val() == 1 || $("#output-format-select").val() == 2) {
+						if ($("#output-format-select").val() == 0) {$("#result-area").html(result)}  // Beautified output
+						if ($("#output-format-select").val() == 1 || $("#output-format-select").val() == 2) {  // JSON output
 							result = JSON.stringify(result, null, '\t');
 							$("#result-area").text(result)
 						}
-						if ($("#output-format-select").val() == 3) {
+						if ($("#output-format-select").val() == 3) {  // Map output
 							$("#result-area").text(result)
-							// Draw on map
+							// Remove old layer from map
+							if (mapFeatureDict["result"]) {
+								for (i in mapFeatureDict["result"]){
+									map.removeLayer(mapFeatureDict["result"][i]);
+								}
+							}
+							else {
+								mapFeatureDict["result"] = []
+							}
+							// Draw new layer on map
 							var wicket = new Wkt.Wkt();
-							wicket.read(result);
-							var feature = wicket.toObject();
-							if (mapFeatureDict["result"]) { map.removeLayer(mapFeatureDict["result"]); }
-							mapFeatureDict["result"] = feature
-							mapFeatureDict["result"].addTo(map);
+							for (i in result){
+								wktGeom = result[i]
+								wicket.read(wktGeom);
+								var feature = wicket.toObject();
+								mapFeatureDict["result"][i] = feature;
+								console.log(wktGeom)
+								mapFeatureDict["result"][i].addTo(map);
+							}
 						}
 					});
 				}

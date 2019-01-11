@@ -28,19 +28,18 @@ app.url_map.converters['float'] = FloatConverter
 
 
 ## Routes for static content
-print (config.static_url_path)
 #config.static_url_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'static')
 #print (config.static_url_path)
 @app.route('/static/vendor/<string:filename>', methods=['GET'])
 def getVendorLib(filename):
-    return send_from_directory(config.static_url_path + '/vendor', filename)
+	return send_from_directory(config.static_url_path + '/vendor', filename)
 @app.route('/static/maps/<string:filename>', methods=['GET'])
 def getMapImage(filename):
-    return send_from_directory(config.static_url_path + '/maps', filename)
+	return send_from_directory(config.static_url_path + '/maps', filename)
 # Workaround TODO: Place proper tags in html and link to favicon folder instead
 @app.route('/static/favicon/<string:filename>', methods=['GET'])
 def getFavicon(filename):
-    return send_from_directory(config.static_url_path + '/favicon', filename)
+	return send_from_directory(config.static_url_path + '/favicon', filename)
 
 
 ## Dynamic Routes
