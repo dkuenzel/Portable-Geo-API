@@ -52,8 +52,7 @@
 			
 			<div id="input-container" class='content-div'>
 			
-				<label for="query-builder-div">Build your request:</label>
-				
+				<p id="request-string-builder-heading"><b>API request URL builder</b></p>
 				<div id="query-builder-container">
 					<span id="general-options" class="ich-option p2p-option">
 						<input type="text" id="base-url">
@@ -100,11 +99,9 @@
 				
 			</div>
 			
-			<hr>
-			
 			<div id="ss_menu" class='content-div'>
 				<div id="help">
-					<div class="ss_button">Help</div>
+					<div id="help-button" class="ss_button">Help</div>
 					<div class="ss_content">
 						<div id="p2p-doc" class="documentation-text">
 							<h3>Peer to Peer (<i>p2p</i>) requests</h3>
@@ -116,6 +113,7 @@
 								<li>2 = Distance only
 								<li>3 = Route only (returned as array of wkt elements with EPSG 4326)
 							</ul>
+							<i>Notice: only geometry output (outputFormat==3) will be shown on the map!</i>
 						</div>
 						<div id="ich-doc" class="documentation-text">
 							<h3>Isochrone requests (<i>ich</i>) requests</h3>
@@ -128,6 +126,7 @@
 								<li>2 = Nodes only (JSON)
 								<li>3 = Geometry only (returned as WKT element with EPSG 4326)
 							</ul>
+							<i>Notice: only geometry output (outputFormat==3) will be shown on the map!</i>
 						</div>
 					</div>
 					<div class="ss_button">Notifications</div>

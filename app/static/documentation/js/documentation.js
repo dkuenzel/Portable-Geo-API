@@ -115,8 +115,10 @@ function buildRequest() {
 	if (apiFunction == "ich") {
 		requestString = $("#base-url").val() + "/" + $("#api-function-select").val() + "/" + $("#output-format-select").val() + "/" + $("#range-field").val() + "/" + $("#origin-longitude-field").val() + "/" + $("#origin-latitude-field").val()
 	}
-	$("#notification-area").parent().prev('.ss_button').click();
-	$("#notification-area").text(requestString)
+	if ($("#notification-area").text() == ""){
+		$("#notification-area").parent().prev('.ss_button').click();
+	}
+	$("#notification-area").text("Request String: " + requestString)
 	
 	return requestString
 }
@@ -124,7 +126,9 @@ function buildRequest() {
 // Ajax request
 function sendRequest() {
 	request = buildRequest()
-	$("#result-area").parent().prev('.ss_button').click();
+	if ($("#result-area").text() == ""){
+		$("#result-area").parent().prev('.ss_button').click();
+	}
 	$("#result-area").text("loading data...");
 	$.ajax({
 		url: request,
@@ -194,6 +198,7 @@ $(document).ready( function () {
 		}
 	});
 	$("#api-function-select").change()  // Update view
+	$("#help-button").click();
 });
 
 		
