@@ -10,7 +10,7 @@ var map = L.map('map-div').setView(startCenter, 13);
 // Icons
 var PedestrianIconClass = L.Icon.extend({
 	options: {
-		iconUrl: '/static/images/icon-walk.png',
+		iconUrl: '/static/images/icons/icon-walk.png',
 		iconSize:	  [20, 30],
 		iconAnchor:	[10, 15],
 		popupAnchor:  [30, 0]

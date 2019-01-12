@@ -51,7 +51,7 @@ baseMap.getTileUrl = function(coords) {
 	//var ty = coords.y + (6 * Math.pow(2, zoomLevel - 3));
 	var tx = coords.x;
 	var ty = coords.y
-	result = '/' + zoomLevel + '/' + tx + '/' + ty + '.png';
+	//result = '/' + zoomLevel + '/' + tx + '/' + ty + '.png';
 	result = 'https://tile.openstreetmap.org/' + zoomLevel + '/' + tx + '/' + ty + '.png';
 	console.log(result);
 	return result;
