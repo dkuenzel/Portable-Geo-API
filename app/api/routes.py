@@ -27,37 +27,19 @@ class FloatConverter(BaseFloatConverter):
 app.url_map.converters['float'] = FloatConverter
 
 
-## Routes for static content
-#config.static_url_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'static')
-#print (config.static_url_path)
-## Documentation
-@app.route('/static/documentation/<string:filename>', methods=['GET'])
-def getDocumentation(filename):
-	return send_from_directory(config.static_url_path + '/documentation', filename)
-
-## External libraries
-@app.route('/static/vendor/<string:filename>', methods=['GET'])
-def getVendorLib(filename):
-	return send_from_directory(config.static_url_path + '/vendor', filename)
-
-## Images
-@app.route('/static/images/<string:filename>', methods=['GET'])
-def getMapImage(filename):
-	return send_from_directory(config.static_url_path + '/images', filename)
-
-## Favicon
-@app.route('/static/favicon/<string:filename>', methods=['GET'])
-def getFavicon(filename):
-	return send_from_directory(config.static_url_path + '/favicon', filename)
-
-
 ## Dynamic Routes
 # Output documentation with sandbox for requests on root
 
 @app.route('/')
 def help():
-	return send_from_directory(config.static_url_path + '/documentation', 'documentation.html')
-
+	return send_from_directory(config.static_url_path + '/documentation', 'index.html')
+	
+#config.static_url_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'static')
+#print (config.static_url_path)
+## Static Content
+@app.route('/static/<string:topDir>/<string:subDir>/<string:fileName>', methods=['GET'])
+def getStaticContent(topDir, subDir, fileName):
+	return send_from_directory(config.static_url_path + f"/{topDir}" + f"/{subDir}", fileName)
 
 ## P2P Routing
 # Try: http://127.0.0.1:5000/p2p/0/5.125/51.31234/5.12/51.31
