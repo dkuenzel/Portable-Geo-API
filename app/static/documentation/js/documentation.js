@@ -4,8 +4,7 @@ var mapFeatureDict = {}  // Container for the map mapFeatureDict
 startCenter=[51.21358759080191, 6.7471182346344]
 
 // Map instance
-var map = L.map('map-div').setView(startCenter, 13);
-
+var map = L.map('map-div').setView(startCenter, 15);
 
 // Icons
 var PedestrianIconClass = L.Icon.extend({
@@ -27,6 +26,7 @@ baseMap = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 	attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 });
 
+
 // Simplistic global Style map
 /*
 baseMap = L.tileLayer.wms('https://demo.boundlessgeo.com/geoserver/ows?', {
@@ -45,6 +45,7 @@ baseMap = L.tileLayer.wms('https://demo.boundlessgeo.com/geoserver/ows?', {
 //});
 
 // TODO: mplement function to prevent "slipping" of features on the map due to round errors
+/*
 baseMap.getTileUrl = function(coords) {
 	var zoomLevel = coords.z;
 	//var tx = coords.x + (8 * Math.pow(2, zoomLevel - 3)); 
@@ -55,7 +56,7 @@ baseMap.getTileUrl = function(coords) {
 	result = 'https://tile.openstreetmap.org/' + zoomLevel + '/' + tx + '/' + ty + '.png';
 	console.log(result);
 	return result;
-}
+}*/
 
 baseMap.addTo(map);
 
