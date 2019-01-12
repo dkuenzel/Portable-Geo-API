@@ -39,8 +39,6 @@ DB="osm_routing"; logFile="/tmp/routing_sql.log"; rm $logFile; touch $logFile; I
 <h3>DB ops</h3>
 
 ```sql
-create schema pedestrian;  -- Separate graphs by transportation mode !!
-create schema car;  -- Separate graphs by transportation mode !!
 create extension postgis;
 create extension pgRouting;
 create index on world_2po_4pgr using gist (geom_vertex);
