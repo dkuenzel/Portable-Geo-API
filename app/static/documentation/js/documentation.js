@@ -135,6 +135,7 @@ function sendRequest() {
 		cache: false
 	})
 		.done(function(result) {
+			$('#documentation-slider').slideUp('fast');
 			if ($("#output-format-select").val() == 0) {
 				$("#result-area").html(result)
 			}  // Beautified output
@@ -200,5 +201,3 @@ $(document).ready( function () {
 	$("#api-function-select").change()  // Update view
 	$("#help-button").click();
 });
-
-		
