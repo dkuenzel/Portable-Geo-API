@@ -197,7 +197,7 @@ $(document).ready( function () {
 			$("#destination-location-from-map").hide()
 			$(".ich-option").show()
 		}
+		$("#documentation-slider").slideDown('fast')
 	});
 	$("#api-function-select").change()  // Update view
-	$("#help-button").click();
 });
