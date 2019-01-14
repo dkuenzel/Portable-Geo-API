@@ -71,6 +71,14 @@ def p2pGetGeometry(origin_lon, origin_lat, destination_lon, destination_lat):
 	request = Route(pgConnString, config, origin_lon, origin_lat, destination_lon, destination_lat)
 	return jsonify(request.getGeometry())
 
+# TODO: Implement optimization for line geometries if necessary. So far the singleGeometry parameter is ignored, instead the standard version of the geometry is delivered. 
+# This route only exists to provide an entry point for p2p with function 4 (==optimized gemetry) to prevent fiddling with the frontend!!
+# Try: http://127.0.0.1:5000/p2p/4/5.125/51.31234/5.12/51.31
+@app.route('/p2p/4/<float:origin_lon>/<float:origin_lat>/<float:destination_lon>/<float:destination_lat>', methods=['GET'])
+def p2pGetSingleGeometry(origin_lon, origin_lat, destination_lon, destination_lat):
+	request = Route(pgConnString, config, origin_lon, origin_lat, destination_lon, destination_lat, singleGeometry=True)
+	return jsonify(request.getGeometry())
+
 
 ## Isochrones
 # Try: http://127.0.0.1:5000/ich/0/0.25/5.125/51.31234

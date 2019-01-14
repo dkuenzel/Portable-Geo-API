@@ -3,7 +3,7 @@ import re
 
 
 class geoRequest:
-	def __init__(self, pgConnString, config, originLon, originLat, dop=0.1, transportationMode=0):
+	def __init__(self, pgConnString, config, originLon, originLat, dop):
 		# Database connection
 		self.pgConnString = pgConnString
 		self.config = config
@@ -11,27 +11,27 @@ class geoRequest:
 		self.origin = Vertex(self.pgConnString, self.config, lon=originLon, lat=originLat)
 		# Global modificators
 		self.dop = dop # Max distance between input geocode and route network entry vertex
-		self.transportationMode = transportationMode  # Used for selection of routing network and moving speed. No further implementation right now, just to be future proof: 0=pedestrian
 	
 	# Output Functions
-	#def getRaw(self):
-	#	pass
-	# Output Functions
-	#def getDistance(self):
-	#	pass
+	def getRaw(self):
+		pass
 
-	#def html(self):
-	#	pass
+	def getHtml(self):
+		pass
+
+	def getGeometry(self):
+		pass
 
 
 class Route (geoRequest):
-	def __init__(self, pgConnString, config, originLon, originLat, destinationLon, destinationLat, dop=0.01, transportationMode=0):
-		super().__init__(pgConnString, config, originLon, originLat, dop, transportationMode)
+	def __init__(self, pgConnString, config, originLon, originLat, destinationLon, destinationLat, dop=0.01, singleGeometry=False):
+		super().__init__(pgConnString, config, originLon, originLat, dop)
 		# Parameters
 		# TODO: Outsource the db conn + cursor creation to an external handler to become more flexible?
 		self.dbConn = psycopg2.connect(pgConnString)
 		self.dbCursor = self.dbConn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 		self.config = config
+		self.singleGeometry = singleGeometry # Parameter is ignored for now
 		self.destination = Vertex(self.pgConnString, self.config, lon=destinationLon, lat=destinationLat)
 		# Instance variables
 		self.resultsRaw = self._routingRequest()
@@ -48,7 +48,6 @@ class Route (geoRequest):
 			if way['geom'] is not None:
 				routes.append(way['geom'])
 		return routes
-		#return '\n'.join(routes)
 
 	# Output Functions
 	def getDistance(self):
@@ -87,7 +86,6 @@ class Route (geoRequest):
 		self.dbCursor.execute(sql)
 		result = self.dbCursor.fetchall()
 		self.dbConn.commit()
-		# Return result
 		return result
 
 	# Calculate route distance
@@ -101,9 +99,8 @@ class Route (geoRequest):
 
 # Calculate Isochrone
 class Isochrone (geoRequest):
-	def __init__(self, pgConnString, config, originLon, originLat, dop=0.01, transportationMode=0, maxRange=0.5, directed=False,
-				 reverseCost=False, alphaValue=0):
-		super().__init__(pgConnString, config, originLon, originLat, dop, transportationMode)
+	def __init__(self, pgConnString, config, originLon, originLat, dop=0.01, maxRange=0.5, directed=False, reverseCost=False, alphaValue=0):
+		super().__init__(pgConnString, config, originLon, originLat, dop)
 		# DB + Config
 		# TODO: Outsource the db conn + cursor creation to an external handler to become more flexible?
 		self.dbConn = psycopg2.connect(pgConnString)
@@ -176,7 +173,6 @@ class Isochrone (geoRequest):
 		self.dbCursor.execute(sql)
 		result = self.dbCursor.fetchall()
 		self.dbConn.commit()
-		# Return result
 		return result
 
 	def _queryGeometry(self):
@@ -228,12 +224,6 @@ if (__name__ == "__main__"):
 	import psycopg2
 	import psycopg2.extras
 
-	# class config:
-	#	edgesTable = "world_2po_4pgr"
-	#	vertexTable = "world_2po_vertex"
-	# config=config()
-
-	# from tc_db4_connect_v2 import *
 	try:
 		dbConn = psycopg2.connect(pgConnString)
 		dbCursor = dbConn.cursor(cursor_factory=psycopg2.extras.DictCursor)
