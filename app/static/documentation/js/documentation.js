@@ -1,7 +1,7 @@
 // Globals
 var baseUrl = window.location.origin  // Get base API URL
 var mapFeatureDict = {}  // Container for the map mapFeatureDict 
-startCenter=[51.21358759080191, 6.7471182346344]
+startCenter=[51.22477486472141, 6.78782343864441]
 
 // Functions
 function zoomToFeatures(){
@@ -143,7 +143,7 @@ function sendRequest() {
 				result = JSON.stringify(result, null, '\t');
 				$("#result-area").text(result)
 			}
-			if ($("#output-format-select").val() == 3) {  // Map output
+			if ($("#output-format-select").val() == 3 || $("#output-format-select").val() == 4) {  // Map output
 				$("#result-area").text(result)
 				// Remove old layer from map
 				if (mapFeatureDict["result"]) {
@@ -189,8 +189,8 @@ $(document).ready( function () {
 			$("#query-builder-container span").hide()
 			$("#destination-location-from-map").show()
 			$(".p2p-option").show()
-					}
-					else if ($("#api-function-select").val() == "ich") {
+		}
+		else if ($("#api-function-select").val() == "ich") {
 			$(".documentation-text").hide()
 			$("#ich-doc").show()
 			$("#query-builder-container span").hide()

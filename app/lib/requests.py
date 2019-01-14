@@ -12,34 +12,16 @@ class geoRequest:
 		# Global modificators
 		self.dop = dop # Max distance between input geocode and route network entry vertex
 		self.transportationMode = transportationMode  # Used for selection of routing network and moving speed. No further implementation right now, just to be future proof: 0=pedestrian
-
-	# Peer to Peer routing request
-	#def p2p(self):
-	#	self.result = route(self.pgConnString, self.config, self.origin, self.destination)
-
-	# Isochrone request
-	#def ich(self):
-	#	self.result = isochrone(self.pgConnString, self.config, self.origin)
 	
 	# Output Functions
 	#def getRaw(self):
-	#	return self.result.raw
-
+	#	pass
 	# Output Functions
 	#def getDistance(self):
-	#	return self.result.distance
-
-	#def __str__(self):
-	#	output = 'Ways:'
-	#	for row in self.result.raw:
-	#		output = output + '\n' + str(row)
-	#	output = output + '\n' + 'Distance: ' + str(self.getDistance()) + ' Km'
-	#	return output
+	#	pass
 
 	#def html(self):
-	#	output = self.__str__()
-	#	output = re.sub(r"\n", "<br>", output)
-	#	return output
+	#	pass
 
 
 class Route (geoRequest):
@@ -60,7 +42,7 @@ class Route (geoRequest):
 		return self.resultsRaw
 
 	# Output Functions
-	def getRoute(self):
+	def getGeometry(self):
 		routes=[]
 		for way in self.resultsRaw:
 			if way['geom'] is not None:
@@ -120,7 +102,7 @@ class Route (geoRequest):
 # Calculate Isochrone
 class Isochrone (geoRequest):
 	def __init__(self, pgConnString, config, originLon, originLat, dop=0.01, transportationMode=0, maxRange=0.5, directed=False,
-				 reverseCost=False):
+				 reverseCost=False, alphaValue=0):
 		super().__init__(pgConnString, config, originLon, originLat, dop, transportationMode)
 		# DB + Config
 		# TODO: Outsource the db conn + cursor creation to an external handler to become more flexible?
@@ -131,6 +113,7 @@ class Isochrone (geoRequest):
 		self.maxRange = maxRange
 		self.directed = directed
 		self.reverseCost = reverseCost
+		self.alphaValue = alphaValue
 		# Results --> Query on demand to save computation time, ideally fetch nodes and polygon variables in one db operation
 		self.resultsNodes = None
 		self.resultsGeometry = None
@@ -174,7 +157,7 @@ class Isochrone (geoRequest):
 				SELECT id, source, target, cost, reverse_cost, km \
 				FROM {self.config.edgesTable} \
 				WHERE \
-					clazz NOT IN (18, 19) \
+					--clazz NOT IN (18, 19) \
 					AND geom_way && ST_Buffer( \
 					ST_SetSRID(ST_MakePoint({self.origin.geocode.longitude.val},{self.origin.geocode.latitude.val}),4326), \
 					0.1 \
@@ -221,7 +204,10 @@ class Isochrone (geoRequest):
 				FROM nodes LEFT JOIN {self.config.vertexTable} AS vertices ON (nodes.id = vertices.id) \
 			); \
 			\
-			SELECT ST_AsText(pgr_pointsAsPolygon('SELECT id, x, y FROM vertex_geometries'));"
+			SELECT ST_AsText(pgr_pointsAsPolygon( \
+				'SELECT id, x, y FROM vertex_geometries' \
+				, {self.alphaValue} \
+			));"
 		self.dbCursor.execute(sql)
 		result = self.dbCursor.fetchall()
 		self.dbConn.commit()

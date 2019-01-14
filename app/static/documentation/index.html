@@ -65,6 +65,7 @@
 							<option>1</option>
 							<option>2</option>
 							<option selected>3</option>
+							<option>4</option>
 						</select>
 						<i>/</i>
 					</span>
@@ -73,15 +74,15 @@
 						<i>/</i>
 					</span>
 					<span id="origin-coordinates" class="p2p-option ich-option">
-						<input type="number" id="origin-longitude-field" class="coordinate-input-field" placeholder="origin longitude" value=6.746410131454469>
+						<input type="number" id="origin-longitude-field" class="coordinate-input-field" placeholder="origin longitude" value=6.78782343864441>
 						<i>/</i>
-						<input type="number" id="origin-latitude-field" class="coordinate-input-field" placeholder="origin latitude" value=51.213931764411576>
+						<input type="number" id="origin-latitude-field" class="coordinate-input-field" placeholder="origin latitude" value=51.22477486472141>
 					</span>
 					<span id="destination-coordinates" class="p2p-option">
 						<i>/</i>
-						<input type="number" id="destination-longitude-field" class="coordinate-input-field" placeholder="destination longitude" value=6.781139373779297>
+						<input type="number" id="destination-longitude-field" class="coordinate-input-field" placeholder="destination longitude" value=6.7721110582351685>
 						<i>/</i>
-						<input type="number" id="destination-latitude-field" class="coordinate-input-field" placeholder="destination latitude" value=51.20876513645167>
+						<input type="number" id="destination-latitude-field" class="coordinate-input-field" placeholder="destination latitude" value=51.22589735014676>
 					</span>
 				</div>
 
@@ -122,7 +123,8 @@
 								<li>0 = Beautified (HTML)
 								<li>1 = Raw output (JSON)
 								<li>2 = Nodes only (JSON)
-								<li>3 = Geometry only (returned as WKT element with EPSG 4326)
+								<li>3 = Geometry without any optimizations only (returned as WKT element with EPSG 4326)
+								<li>4 = Geometry with optimized settings for alpha shape only (returned as WKT element with EPSG 4326)
 							</ul>
 							<i>Notice: only geometry output (outputFormat==3) will be shown on the map!</i>
 						</div>

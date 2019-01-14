@@ -67,9 +67,9 @@ def p2pGetRouteDistance(origin_lon, origin_lat, destination_lon, destination_lat
 
 # Try: http://127.0.0.1:5000/p2p/3/5.125/51.31234/5.12/51.31
 @app.route('/p2p/3/<float:origin_lon>/<float:origin_lat>/<float:destination_lon>/<float:destination_lat>', methods=['GET'])
-def p2pGetRoute(origin_lon, origin_lat, destination_lon, destination_lat):
+def p2pGetGeometry(origin_lon, origin_lat, destination_lon, destination_lat):
 	request = Route(pgConnString, config, origin_lon, origin_lat, destination_lon, destination_lat)
-	return jsonify(request.getRoute())
+	return jsonify(request.getGeometry())
 
 
 ## Isochrones
@@ -95,4 +95,10 @@ def ichGetNodes(max_range, origin_lon, origin_lat):
 @app.route('/ich/3/<float:max_range>/<float:origin_lon>/<float:origin_lat>', methods=['GET'])
 def ichGetGeometry(max_range, origin_lon, origin_lat):
 	request = Isochrone(pgConnString, config, origin_lon, origin_lat, maxRange=max_range)
+	return jsonify(request.getGeometry())
+
+# Try: http://127.0.0.1:5000/ich/0.25/4/5.125/51.31234
+@app.route('/ich/4/<float:max_range>/<float:origin_lon>/<float:origin_lat>', methods=['GET'])
+def ichGetAlphaOptimizedGeometry(max_range, origin_lon, origin_lat):
+	request = Isochrone(pgConnString, config, origin_lon, origin_lat, maxRange=max_range, alphaValue=0.00001)
 	return jsonify(request.getGeometry())
