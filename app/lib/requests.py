@@ -76,7 +76,9 @@ class Route (geoRequest):
 				ST_Envelope(St_MakeLine( \
 					ST_SetSRID(ST_MakePoint({self.origin.geocode.longitude.val},{self.origin.geocode.latitude.val}),4326), \
 					ST_SetSRID(ST_MakePoint({self.destination.geocode.longitude.val},{self.destination.geocode.latitude.val}),4326))), \
-				0.01)); \
+				0.01) \
+				AND clazz NOT IN (18, 19) \
+			); \
 				\
 				SELECT ds.*, tr.km, ST_AsText(tr.geom_way) as geom \
 				FROM pgr_dijkstra \
@@ -154,11 +156,11 @@ class Isochrone (geoRequest):
 				SELECT id, source, target, cost, reverse_cost, km \
 				FROM {self.config.edgesTable} \
 				WHERE \
-					clazz NOT IN (18, 19) \
-					AND geom_way && ST_Buffer( \
+					geom_way && ST_Buffer( \
 					ST_SetSRID(ST_MakePoint({self.origin.geocode.longitude.val},{self.origin.geocode.latitude.val}),4326), \
-					0.1 \
-				));\
+					0.1) \
+					/*AND clazz NOT IN (18, 19)*/ \
+			);\
 			\
 			WITH nodes AS ( \
 				SELECT seq, id1 AS node, cost \
@@ -181,11 +183,10 @@ class Isochrone (geoRequest):
 				SELECT id, source, target, cost, reverse_cost, km \
 				FROM {self.config.edgesTable} \
 				WHERE \
-					clazz NOT IN (18, 19) \
-					AND geom_way && ST_Buffer( \
+					geom_way && ST_Buffer( \
 					ST_SetSRID(ST_MakePoint({self.origin.geocode.longitude.val},{self.origin.geocode.latitude.val}),4326), \
-					0.1 \
-				) \
+					0.1) \
+					/*AND clazz NOT IN (18, 19)*/ \
 			);\
 			\
 			CREATE TEMPORARY TABLE vertex_geometries ON COMMIT DROP AS ( \
