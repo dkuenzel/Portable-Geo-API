@@ -157,7 +157,7 @@ class Isochrone (geoRequest):
 				SELECT id, source, target, cost, reverse_cost, km \
 				FROM {self.config.edgesTable} \
 				WHERE \
-					--clazz NOT IN (18, 19) \
+					clazz NOT IN (18, 19) \
 					AND geom_way && ST_Buffer( \
 					ST_SetSRID(ST_MakePoint({self.origin.geocode.longitude.val},{self.origin.geocode.latitude.val}),4326), \
 					0.1 \
