@@ -1,1 +1,1 @@
-pgConnString = "dbname=osm_routing user=testa password=wa08ef328jfßpij sslmode=prefer host=172.21.52.97"
+pgConnString = "dbname=YOURDATABASENAME user=YOURDATABASEUSER password=YOURDATABASEPASSWORD sslmode=prefer host=YOURHOSTIP"  # Connect string with ssl enabled
