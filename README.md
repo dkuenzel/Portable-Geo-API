@@ -1,5 +1,5 @@
 # Portable-Geo-API
-This Project aims to provide an Rest API for the calculation of road network related analysis (routing, isochrones, etc) on top of OSM data.
+This Project aims to provide an API for the calculation of road network related analysis (routing, isochrones, etc) on top of OSM data.
 
 <h2>General Info</h2>
 
@@ -54,24 +54,26 @@ touch $logFile;
 
 IFS=$'\n'; 
 
-for filename in $(ls -1 /THE/PATH/TO/YOUR/osm2po/OUTPUTFILES/*.sql); 
+for filename in $(ls -1 /PATH/TO/osm2po/world/*.sql); 
 do 
   (psql -d osm_routing --quiet --file $filename 2>&1 | sed -e "s#^#$(date) ${filename} ($$): #g" | tee -a $logFile) & 
 done;
 ```
 
-<h3>DB ops</h3>
+<h3>DB optimization</h3>
+The clustering might not be necessary for in-memory DBs
 
 ```sql
-create extension postgis;
-create extension pgRouting;
 create index on world_2po_4pgr using gist (geom_vertex);
 create index on world_2po_4pgr using gist (geom_way);
 analyze world_2po_4pgr;
 cluster world_2po_vertex using world_2po_vertex_geom_vertex_idx;
 ```
 
-<h3>Run The API</h3>
+<h3>Client setup</h3>
 
-* Adjust the configuration in `app/settings/` to match your database setup
-* After deployment visit: http://yourhost:5000
+1. Clone this repository to the client machine `git clone https://github.com/dkuenzel/Portable-Geo-API`
+2. Adjust the configuration in `app/settings/` to match your database setup
+3. Build the docker container `docker build -t routing:latest .`
+4. Run the docker container using port 5000 of the host `docker run -p 5000:5000 -p routing:latest`
+5. The API documentation, query builder and sandbox should be at http://yourhost:5000 
