@@ -28,26 +28,31 @@ app.url_map.converters['float'] = FloatConverter
 
 
 ## Dynamic Routes
-# Output documentation with sandbox for requests on root
-@app.route('/')
-def help():
-	return send_from_directory(config.static_url_path + '/documentation', 'index.html')
 	
 #config.static_url_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'static')
 #print (config.static_url_path)
 ## TODO: Implement generic route definition which catches recursively all folders and files in /static
+## TODO: Check if input validation/sanitation is needed here
 ## Static Content
 @app.route('/static/<string:topDir>/<string:subDir>/<string:fileName>', methods=['GET'])
 def getStaticContent(topDir, subDir, fileName):
 	return send_from_directory(config.static_url_path + f"/{topDir}" + f"/{subDir}", fileName)
-## Static Content in subdirs
+## Static Content in subdirs 
 @app.route('/static/<string:topDir>/<string:subDir>/<string:subSubDir>/<string:fileName>', methods=['GET'])
 def getStaticContentFromSubDir(topDir, subDir, subSubDir, fileName):
 	return send_from_directory(config.static_url_path + f"/{topDir}" + f"/{subDir}" + f"/{subSubDir}", fileName)
 
 
-## API Routes
-# TODO: Implement option to select if public transport lines should be included
+## Static Routes
+
+## Output documentation with sandbox for requests on root
+@app.route('/')
+def help():
+	return send_from_directory(config.static_url_path + '/documentation', 'index.html')
+
+## Request Routes
+## TODO: Implement option to select if public transport lines should be included
+
 ## P2P Routing
 # Try: http://127.0.0.1:5000/p2p/0/5.125/51.31234/5.12/51.31
 @app.route('/p2p/0/<float:origin_lon>/<float:origin_lat>/<float:destination_lon>/<float:destination_lat>', methods=['GET'])

@@ -34,15 +34,17 @@ class Route (geoRequest):
 		self.singleGeometry = singleGeometry # Parameter is ignored for now
 		self.destination = Vertex(self.pgConnString, self.config, lon=destinationLon, lat=destinationLat)
 		# Instance variables
-		self.resultsRaw = self._routingRequest()
-		self.resultsDistance = self._routingDistance()
+		self.resultsRaw = None
+		self.resultsDistance = None
 
 	# Output Functions
 	def getRaw(self):
+		self.resultsRaw = self._routingRequest()
 		return self.resultsRaw
 
 	# Output Functions
 	def getGeometry(self):
+		self.resultsRaw = self._routingRequest()
 		routes=[]
 		for way in self.resultsRaw:
 			if way['geom'] is not None:
@@ -51,12 +53,15 @@ class Route (geoRequest):
 
 	# Output Functions
 	def getDistance(self):
+		self.resultsDistance = self._routingDistance()
 		return self.resultsDistance
 
 	def __str__(self):
 		output = 'Ways:'
+		self.resultsRaw = self._routingRequest()
 		for row in self.resultsRaw:
 			output = output + '\n' + str(row)
+		self.resultsDistance = self._routingDistance()
 		output = output + '\n' + 'Distance: ' + str(self.getDistance()) + ' Km'
 		return output
 

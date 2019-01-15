@@ -1,6 +1,7 @@
 __pycache__/
 __venv__/
 .idea/
+.vscode/
 credentials*
 app/settings/credentials.py
 

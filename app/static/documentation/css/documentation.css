@@ -2,8 +2,6 @@ html, body, #body-container {
 	height: 100%
 }
 
-
-
 #request-string-builder-heading{
 	color: rgb(0, 1, 68);
 	margin: 0px;
@@ -16,10 +14,20 @@ html, body, #body-container {
 	padding: 5px;
 }
 
-
 body {
 	background-color: #EDF3FF;
 }
+
+input {
+	text-align: -webkit-center;
+}
+
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+	-webkit-appearance: none;
+	margin: 0; 
+}
+
 input[type="text"], input[type="number"] {
 	display: inline-block;
 	-webkit-box-sizing: content-box;
@@ -118,21 +126,27 @@ input[type="text"], input[type="number"] {
 .leaflet-container.crosshair-cursor-enabled {
 	cursor: crosshair;
 }
+
 .content-div {
 	margin-top: 10px;
 }
+
 #map-div {
-	height: 40%;
+	height: 50%;
 }
+
 .coordinate-input-field {
 	width: 150px;
 }
+
 .short-number-input {
 	width: 40px;
 }
+
 #query-builder-container, #query-builder-controls-container {
 	display: inline-block;
 }
+
 .coordinate-picker-button {
 	margin: 5px;
 }
