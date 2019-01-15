@@ -1,4 +1,4 @@
-# pyRouting
+# Portable-Geo-API
 This Project aims to provide an Rest API for the calculation of routes (also isochrones + more to follow) on top of OSM data.
 
 <b>Notice: This project is experimental and under active development right now, meaning refactoring, restructuring, etc will occur. Query format will most certainly change as well. Also the scope is not clear yet so it will probably end up being a more generic geo api which also provides services like isochrone calculation, etc</b>
@@ -47,6 +47,6 @@ analyze world_2po_4pgr;
 cluster world_2po_vertex using world_2po_vertex_geom_vertex_idx;
 ```
 
-<h3>Display isochrones in qgis</h3>
+<h3>Documentation and Sandbox</h3>
 
->select {PRIMARY KEY} as id, st_setsrid(st_geomfromewkt('{HEX-WKB}'), 4326) AS geom;
+After deployment visit: http(s)://yourhost:5000
