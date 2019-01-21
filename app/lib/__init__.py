@@ -2,4 +2,4 @@
 import psycopg2
 import psycopg2.extras
 from lib.basic_types import *
-from lib.requests import *
+from lib.network_requests import *

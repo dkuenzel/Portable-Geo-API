@@ -2,15 +2,21 @@ from api import app
 from flask import jsonify
 from flask import send_from_directory
 from lib.basic_types import *
-from lib.requests import *
+from lib.network_requests import *
 
-################### TODO: Outsource db connection to db handler class? Ideally outsource the cursors from the classes as well?
 import os
 import sys
 import psycopg2
 import psycopg2.extras
 from settings.config import config
 from settings.credentials import DbCredentials # DB Connection: class which contains standard psycopg2 conn strings
+
+###############################
+## Connections established in the following part are only for testing, classes establish their own connections using the the dbConnXXX variables
+## This seems ugly and unnecessary but things did not work smoothly without it, db operations should be completely outsourced to a class with handler method 
+## TODO: Outsource db connection to db handler class? Outsourde cursors from the classes as well (?
+################################
+
 ## Connection to routing database
 try:
 	dbConnRouting = psycopg2.connect(DbCredentials.routing)
@@ -26,6 +32,8 @@ except Exception as e:
 	print (f"No connection to weather DB (reason: {e})")
 	sys.exit()
 ###################
+
+
 
 ## Allow negative values in request
 from werkzeug.routing import FloatConverter as BaseFloatConverter
