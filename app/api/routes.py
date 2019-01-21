@@ -3,6 +3,7 @@ from flask import jsonify
 from flask import send_from_directory
 from lib.basic_types import *
 from lib.network_requests import *
+from lib.weather_requests import *
 
 import os
 import sys
